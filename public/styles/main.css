@@ -10,3 +10,19 @@ body {
 .page-container {
     margin-top: 75px;
 }
+
+#signInButtons {
+    display: flex;
+    justify-content: center;
+    margin-top: 500px;
+}
+
+.authButton {
+    margin-left: 50px;
+    margin-right: 50px;
+    background-color: #34D303;
+}
+
+#loginTitle {
+    font-size: 4em;
+}
