@@ -7,15 +7,43 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
   <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
   <link rel="stylesheet" href="styles/main.css">
-  <title>App Name</title>
+  <title>Budgetter</title>
 </head>
 
 <body>
   <nav class="navbar navbar-dark fixed-top">
     <a class="navbar-brand" href="#">App Name</a>
   </nav>
-  <div id="mainPage" class="container page-container">
+  <div id="homePage" class="container page-container">
 
+    <div align="right">
+      <div id="userIcon" style="width: 50px;
+        height: 50px;border: 2px solid; border-radius: 50%; background-color: blue;">
+        <h2 style="text-align: center; color: white;">J</h2>
+      </div>
+    </div>
+    <div> <!--This div is for the Budget used bar--> 
+      <h1 style="text-align: center;">Budget Used</h1>
+      <div class="progressContainer" style="display: flex;flex-direction: column;
+       width:420; height: 420; padding: 50px 0; border-radius: 8px;
+       align-items: center;">
+        <div class="circularProgress" style="position:relative; width:250px; height: 250px; background: conic-gradient(purple 3.6deg, white 0deg);
+        border-radius: 50%;">
+        </div>
+        <div style="position:relative; width:230px; height: 230px; background: white;
+        border-radius: 50%; margin-top: -240px;">
+        </div>
+      </div>
+    </div>
+    <div>
+      <ol style="display:inline-block;">
+        <Button type="button" class="btn">Recurring</Button>
+        <Button type="button" class="btn">Purchases</Button>
+      </ol>
+    </div>
+    <div class="justify-content-center">
+      <Button type="button" class="btn">Stats</Button>
+    </div>
 
   </div>
   <script src="scripts/jquery.min.js"></script>
