@@ -1,5 +1,5 @@
 body {
-    background: #DDDDDD;
+    background: white;
 }
 
 .navbar {
@@ -25,4 +25,8 @@ body {
 
 #loginTitle {
     font-size: 4em;
+}
+
+.stat {
+    display: flex;
 }
