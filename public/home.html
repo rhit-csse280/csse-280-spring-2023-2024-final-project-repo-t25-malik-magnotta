@@ -16,29 +16,34 @@
   </nav>
   <div id="homePage" class="container page-container">
 
+    <br>
     <div align="right">
       <div id="userIcon" style="width: 50px;
         height: 50px;border: 2px solid; border-radius: 50%; background-color: blue;">
-        <h2 style="text-align: center; color: white;">J</h2>
+        <h2 style="text-align: center; vertical-align: bottom; color:white;">J</h2>
       </div>
     </div>
+    <br>
+    <br>
     <div> <!--This div is for the Budget used bar--> 
-      <h1 style="text-align: center;">Budget Used</h1>
-      <div class="progressContainer" style="display: flex;flex-direction: column;
-       width:420; height: 420; padding: 50px 0; border-radius: 8px;
+      <h1 style="text-align: center; margin-bottom: 5%;font-weight: bolder;">Budget Used</h1>
+      <div class="progressContainer" style="display: flex;flex-direction: column;padding: 50px 0; border-radius: 8px;
        align-items: center;">
-        <div class="circularProgress" style="position:relative; width:250px; height: 250px; background: conic-gradient(purple 3.6deg, white 0deg);
+        <div class="circularProgress" style="position:relative; width:250px; height: 250px; background: conic-gradient(lightgreen 150deg,orange 180deg 300deg,red 320deg 359.9deg);
+        border-radius: 50%;  z-index: -2; box-shadow: 10px 10px 25px 0px lightblue;" >
+        </div>
+        <div class="circularProgress" style="position:relative; width:254px; height: 254px;  margin-top: -251px; background:conic-gradient(#00000000 259deg,white 0deg);
         border-radius: 50%;">
         </div>
         <div style="position:relative; width:230px; height: 230px; background: white;
-        border-radius: 50%; margin-top: -240px;">
+        border-radius: 50%; margin-top: -242.5px;"> <h1 style="position: absolute; top: 50%;left: 50%;-ms-transform: translate(-50%, -50%);transform: translate(-50%, -50%); font-weight: bolder;" >75%</h1>
         </div>
       </div>
     </div>
-    <div>
-      <ol style="display:flex; justify-content: center;">
-        <Button type="button" class="btn" style=" margin-left: 25%; margin-left: 20%;">Recurring</Button>
-        <Button type="button" class="btn" style="margin-right: 25%;">Purchases</Button>
+    <div style="margin-bottom:15%; ">
+      <ol style="display:flex;">
+        <Button type="button" class="btn" style=" position: absolute; left: 10%;">Recurring</Button>
+        <Button type="button" class="btn" style=" position: absolute; right: 10%;">Purchases</Button>
       </ol>
     </div>
     <div class="justify-content-center" style="display: flex; justify-content: center;">
