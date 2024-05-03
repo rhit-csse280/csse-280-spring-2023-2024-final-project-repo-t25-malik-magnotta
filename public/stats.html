@@ -18,25 +18,12 @@
 
   <div id="statsPage" class="container page-container">
     <!-- for the graph -->
-    <div id="my-chart">
-
-      <table class="charts-css column show-headding">
-        <caption> Descriptive Column Chart Heading </caption>
-        <tr>
-          <td style="--size: 0.2"> <span class="data"> Data </span> </td>
-          <td style="--size: 0.4"> <span class="data"> Data </span> </td>
-          <td style="--size: 0.6"> <span class="data"> Data </span> </td>
-        </tr>
-      </table>
-      <ul class="charts-css legend">
-      </ul>
-    
+    <div>
+      <canvas id="myChart"></canvas>
     </div>
-
     <br>
     <br>
     <br>
-
     <h1 style="text-align: center;">Average Spending on Diffrent Items</h1>
     <!-- for the bar -->
     <div>
@@ -48,11 +35,11 @@
         <li>
           <div style="background-color: black; height: 10px;"></div>
         </li>
-      </ol>
+      </ol>c
     </div>
     <br>
     <div style="text-align: center;">
-        <button class="btn" style="border: solid black 2px; border-radius: 5%;">Home</button>
+        <button id="homeButton" class="btn" style="border: solid black 2px; border-radius: 5%;">Home</button>
     </div>
 
   </div>
@@ -65,6 +52,7 @@
   <script src="/__/firebase/7.18.0/firebase-auth.js"></script>
   <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
   <script src="/__/firebase/init.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="scripts/main.js"></script>
 </body>
 

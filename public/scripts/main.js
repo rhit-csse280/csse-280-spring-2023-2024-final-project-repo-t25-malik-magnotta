@@ -3,6 +3,48 @@ var budget = budget || {};
 budget.UID = null;
 budget.fbAuthManager = null;
 
+
+
+
+
+
+
+
+
+
+
+budget.UserDataManager = class {
+	constructor(){
+		
+	}
+}
+
+budget.UserData = class {
+
+	constructor(){
+
+	}
+}
+
+budget.PurchasesManager = class {
+	constructor(){
+		
+	}
+}
+
+budget.PurchaseManager = class {
+	constructor(){
+		
+	}
+}
+
+budget.Purchase = class{
+	constructor(){
+		
+	}
+}
+
+
 budget.FbAuthManager = class {
 	constructor() {
 		this._user = null;
@@ -74,11 +116,54 @@ budget.HomePageController = class {
 		document.querySelector("#signOutButton").onclick = (event) => {
 			budget.fbAuthManager.signOut();
 		}
+
+		document.querySelector("#purchasesPageButton").onclick = (event) => {
+		}
+
+		document.querySelector("#recurringPageButton").onclick = (event) => {
+			
+		}
+
+		document.querySelector("#statsPageButton").onclick = (event) => {
+			window.location.href = "/stats.html";
+		}
 	}
 }
 
 budget.StatsPageController = class {
 	constructor() {
+		this.updateView();
+
+		document.querySelector("#homeButton").onclick = (event) => {
+			window.location.href = "/home.html";
+		}
+
+	}
+
+	createChart(){
+		const ctx = document.getElementById('myChart');
+      	new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['January', 'Febuary', 'March', 'April', 'May', 'June','July','August','September','October','November','December'],//this stays constant
+          datasets: [{
+            label: 'Amount Spent',
+            data: [12, 19, 3, 5, 2, 3,5,5,5,5,5,5],
+            borderWidth: 3
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+	}
+
+	updateView(){
+		this.createChart();
 	}
 }
 
@@ -96,6 +181,10 @@ initializePage = () => {
 		new budget.StatsPageController();
 	}
 	else if(document.querySelector("#purchasesPage")){
+		console.log("Purchases Page");
+
+	}
+	else if(document.querySelector("#recurringPage")){
 		console.log("Purchases Page");
 
 	}
