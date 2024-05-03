@@ -14,23 +14,6 @@ budget.FbAuthManager = class {
 		});
 	}
 	signIn() {
-		Rosefire.signIn("", (err, rfUser) => {
-			if (err) {
-				console.log("Rosefire error!", err);
-				return;
-			}
-			console.log("Rosefire success!", rfUser);
-
-			firebase.auth().signInWithCustomToken(rfUser.token).catch((error) => {
-				if (error.code === 'auth/invalid-custom-token') {
-					console.log("The token you provided is not valid.");
-				} else {
-					console.log("signInWithCustomToken error", error.message);
-				}
-			});
-		});
-
-
 	}
 	signOut() {
 		firebase.auth().signOut();
@@ -57,32 +40,39 @@ budget.LoginPageController = class {
 	}
 }
 
-
-
-initializePage = () => {
-	
-	if(document.querySelector("#loginPage")){
-
+budget.HomePageController = class {
+	constructor() {
 	}
-	else if(document.querySelector("#homePage")){
-
-	}
-	else if(document.querySelector("#statsPage")){
-
-	}
-
-
-
 }
 
+budget.StatsPageController = class {
+	constructor() {
+	}
+}
 
-rhit.main = function () {
+initializePage = () => {
+
+	if(document.querySelector("#loginPage")){
+		console.log("login Page");
+		new budget.LoginPageController();
+	}
+	else if(document.querySelector("#homePage")){
+		console.log("Home Page");
+		new budget.HomePageController();
+	}
+	else if(document.querySelector("#statsPage")){
+		console.log("Stats Page");
+		new budget.StatsPageController();
+	}
+	else if(document.querySelector("#purchasesPage")){
+		console.log("Purchases Page");
+
+	}
+}
+
+budget.main = function () {
 	console.log("Ready");
-
-	budget.LoginPageController();
-
-
-
+	initializePage();
 };
 
-rhit.main();
+budget.main();

@@ -30,3 +30,8 @@ body {
 .stat {
     display: flex;
 }
+
+.home-page-buttons{
+    border: 1px black solid; 
+    background-color: rgb(147, 225, 156);
+}
