@@ -19,12 +19,23 @@
 
     <h1 id="loginTitle" class="text-center" >Welcome to Budget Tracker</h1>
 
-    <div id="firebaseui-auth-container"></div>
+    <div id="firebaseui-auth-container">
+      <div class="form-group">
+        <label for="inputEmail" class="bmd-label-floating">Email</label>
+        <input type="email" class="form-control" id="inputEmail">
+      </div>
+      <div class="form-group">
+        <label for="inputPassword" class="bmd-label-floating">Password</label>
+        <input type="password" class="form-control" id="inputPassword">
+      </div>
+    </div>
 
     <div id="signInButtons">
-      <div class="btn authButton">Log In</div>
-      <div class="btn authButton">Sign Up</div>
+      <div id="logInButton" class="btn authButton">Log In</div>
+      <div id="signUpButton" class="btn authButton">Sign Up</div>
     </div>
+
+    
 
   </div>
   <script src="scripts/jquery.min.js"></script>

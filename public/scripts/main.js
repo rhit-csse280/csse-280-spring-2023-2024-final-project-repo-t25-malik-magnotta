@@ -1,7 +1,7 @@
 var budget = budget || {};
 
 budget.UID = null;
-
+budget.fbAuthManager = null;
 
 budget.FbAuthManager = class {
 	constructor() {
@@ -13,7 +13,19 @@ budget.FbAuthManager = class {
 			changeListener();
 		});
 	}
-	signIn() {
+	signUp(email, password) {
+		firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error){
+			var errorCode = error.code;
+			var errorMessage = error.message;
+			console.log("Failed to create account", errorCode, errorMessage);
+		})
+	}
+	logIn(email, password){
+		firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error){
+			var errorCode = error.code;
+			var errorMessage = error.message;
+			console.log("Failed to create account", errorCode, errorMessage)
+		})
 	}
 	signOut() {
 		firebase.auth().signOut();
@@ -35,13 +47,33 @@ budget.LoginPageController = class {
 			  	firebase.auth.EmailAuthProvider.PROVIDER_ID,
 				],
 		  	};
-		  const ui = new firebaseui.auth.AuthUI(firebase.auth());
-		  ui.start('#firebaseui-auth-container', uiConfig);
+		//   const ui = new firebaseui.auth.AuthUI(firebase.auth());
+		//   ui.start('#firebaseui-auth-container', uiConfig);
+		  const inputEmailEl = document.querySelector("#inputEmail");
+		  const inputPasswordEl = document.querySelector("#inputPassword");
+		  document.querySelector("#signUpButton").onclick = (event) => {
+			budget.fbAuthManager.signUp(inputEmailEl.value, inputPasswordEl.value);
+		  }
+		  document.querySelector("#logInButton").onclick = (event) => {
+			budget.fbAuthManager.logIn(inputEmailEl.value, inputPasswordEl.value);
+		  }
+	}
+}
+
+budget.checkForRedirects = function(){
+	if(document.querySelector("#loginPage") && budget.fbAuthManager.isSignedIn){
+		window.location.href = "/home.html";
+	}
+	if(!document.querySelector("#loginPage") && !budget.fbAuthManager.isSignedIn){
+		window.location.href = "/";
 	}
 }
 
 budget.HomePageController = class {
 	constructor() {
+		document.querySelector("#signOutButton").onclick = (event) => {
+			budget.fbAuthManager.signOut();
+		}
 	}
 }
 
@@ -51,7 +83,6 @@ budget.StatsPageController = class {
 }
 
 initializePage = () => {
-
 	if(document.querySelector("#loginPage")){
 		console.log("login Page");
 		new budget.LoginPageController();
@@ -72,7 +103,11 @@ initializePage = () => {
 
 budget.main = function () {
 	console.log("Ready");
-	initializePage();
+	budget.fbAuthManager = new budget.FbAuthManager();
+	budget.fbAuthManager.beginListening(() => {
+		budget.checkForRedirects();
+		initializePage();
+	})
 };
 
 budget.main();
