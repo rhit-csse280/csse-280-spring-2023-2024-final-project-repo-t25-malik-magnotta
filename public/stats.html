@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
   <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
+  <link rel="stylesheet" href="styles/charts.min.css">
   <link rel="stylesheet" href="styles/main.css">
   <title>Budget Tracker</title>
 </head>
@@ -17,35 +18,37 @@
 
   <div id="statsPage" class="container page-container">
     <!-- for the graph -->
-    <div class="container" style="height: 250px;">
-        <div class="row" style="height: 250px; background-color: black; padding: 15px;" >
-            <div class="col" style="background-color: aqua; margin-right: 15px;"></div>
-            <div class="col" style="background-color: aqua;  margin-right: 15px;"></div>
-            <div class="col" style="background-color: aqua;  margin-right: 15px;"></div>
-            <div class="col" style="background-color: aqua;  margin-right: 15px;"></div>
-            <div class="col" style="background-color: aqua;  margin-right: 15px;"></div>
-            <div class="col" style="background-color: aqua;  margin-right: 15px;"></div>
-            <div class="col" style="background-color: aqua;  margin-right: 15px;"></div>
-            <div class="col" style="background-color: aqua;  margin-right: 15px;"></div>
-            <div class="col" style="background-color: aqua;  margin-right: 15px;"></div>
-            <div class="col" style="background-color: aqua;  margin-right: 15px;"></div>
-            <div class="col" style="background-color: aqua;  margin-right:15px;"></div>
-            <div class="col" style="background-color: aqua;  margin-right: 15px;"></div>
-        </div>
-    </div>
+    <div id="my-chart">
+
+      <table class="charts-css column show-headding">
+        <caption> Descriptive Column Chart Heading </caption>
+        <tr>
+          <td style="--size: 0.2"> <span class="data"> Data </span> </td>
+          <td style="--size: 0.4"> <span class="data"> Data </span> </td>
+          <td style="--size: 0.6"> <span class="data"> Data </span> </td>
+        </tr>
+      </table>
+      <ul class="charts-css legend">
+      </ul>
+    
     </div>
 
     <br>
     <br>
     <br>
+
     <h1 style="text-align: center;">Average Spending on Diffrent Items</h1>
     <!-- for the bar -->
     <div>
 
     </div>
     <!-- for the list of difrent types of purchases -->
-    <div>
-
+    <div style="display: flex;">
+      <ol style="display: inline-block;">
+        <li>
+          <div style="background-color: black; height: 10px;"></div>
+        </li>
+      </ol>
     </div>
     <br>
     <div style="text-align: center;">
