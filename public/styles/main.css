@@ -35,3 +35,11 @@ body {
     border: 1px black solid; 
     background-color: rgb(147, 225, 156);
 }
+
+#homeButton{
+    margin-right: 900px;
+}
+
+#purchaseButtons{
+    margin-top: auto;
+}
