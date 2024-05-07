@@ -106,7 +106,7 @@ budget.checkForRedirects = function(){
 	if(document.querySelector("#loginPage") && budget.fbAuthManager.isSignedIn){
 		window.location.href = "/home.html";
 	}
-	if(!document.querySelector("#loginPage") && !budget.fbAuthManager.isSignedIn){
+	if(!!!document.querySelector("#loginPage") && !budget.fbAuthManager.isSignedIn){
 		window.location.href = "/";
 	}
 }
@@ -118,10 +118,11 @@ budget.HomePageController = class {
 		}
 
 		document.querySelector("#purchasesPageButton").onclick = (event) => {
+			window.location.href = "/purchases.html";
 		}
 
 		document.querySelector("#recurringPageButton").onclick = (event) => {
-			
+			window.location.href = "/recurring.html";
 		}
 
 		document.querySelector("#statsPageButton").onclick = (event) => {
