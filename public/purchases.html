@@ -6,27 +6,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
   <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
-  <link rel="stylesheet" href="styles/charts.min.css">
   <link rel="stylesheet" href="styles/main.css">
   <title>Budget Tracker</title>
 </head>
 
 <body>
+<!-- 
+</nav> -->
+<!-- <div id="purchasePage" class="container page-container">
+  <h1 id="spendingCount">Total Spent: $0</h1> -->
+  <!-- for the list of difrent types of purchases -->
+  <!-- <div  id="nullPurchase" style="text-align: center;">
+      No Data
+  </div>
+  <br>
+  <div id="purchaseButtons" style="text-align: center;">
+      <button id="homeButton" class="btn" style="border: solid black 2px; border-radius: 5%;">Home</button>
+      <button id="addButton" class="btn" style="border: solid black 2px; border-radius: 5%;">Add</button>
+  </div> -->
   <nav class="navbar navbar-dark fixed-top">
     <a class="navbar-brand" href="#">Budget Tracker</a>
-  </nav>
 
-  <div id="purchasePage" class="container page-container">
-    <h1 id="spendingCount">Total Spent: $0</h1>
-    <!-- for the list of difrent types of purchases -->
+  </nav>
+  <div id="purchasesPage" class="container page-container">
+
     <div  id="nullPurchase" style="text-align: center;">
-        No Data
+      No Data
     </div>
-    <br>
-    <div id="purchaseButtons" style="text-align: center;">
-        <button id="homeButton" class="btn" style="border: solid black 2px; border-radius: 5%;">Home</button>
-        <button id="addButton" class="btn" style="border: solid black 2px; border-radius: 5%;">Add</button>
+  
+    <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#addQuoteDialog">
+      <i class="material-icons">add</i>
+    </button>
+
+    <div class="modal fade" id="addQuoteDialog" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add Purchase</h5>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+                <label for="formControlSelect">Type of Purchase</label>
+                <select class="form-control" id="formControlSelect">
+                 
+                  <option value=""></option>
+                  
+                  <option value="">Groceries</option>
+
+                  <option value="">Resturant</option>
+
+                  <option value=""> Personal Care</option>
+
+                  <option value="">Transportation</option>
+
+                  <option value="">Entertainment</option>
+                  
+                  <option value="">Clothing</option>
+
+                  <option value="">Household Supplies</option>
+
+                  <option value="">Medical</option>
+
+                  <option value="">Gift/Donation</option>
+
+                </select>
+              </div>
+              <div data-mdb-input-init class="form-outline">
+                <input type="number" id="typeNumber" class="form-control" step="0.01" />
+                <label class="bmd-label-floating" for="typeNumber">Cost</label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>
+            <button type="button" id="submitAddPurchase" class="btn btn-primary" data-dismiss="modal">SUBMIT</button>
+          </div>
+        </div>
+     </div>
     </div>
+   
 
   </div>
   <script src="scripts/jquery.min.js"></script>
@@ -38,7 +95,6 @@
   <script src="/__/firebase/7.18.0/firebase-auth.js"></script>
   <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
   <script src="/__/firebase/init.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="scripts/main.js"></script>
 </body>
 
