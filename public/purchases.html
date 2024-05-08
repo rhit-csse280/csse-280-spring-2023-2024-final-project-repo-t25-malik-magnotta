@@ -30,7 +30,8 @@
   </nav>
   <div id="purchasesPage" class="container page-container">
 
-    <div id="quoteListContainer">
+    <div  id="nullPurchase" style="text-align: center;">
+      No Data
     </div>
   
     <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#addQuoteDialog">
@@ -45,13 +46,29 @@
           </div>
           <div class="modal-body">
             <div class="form-group">
-                <label for="exampleFormControlSelect1">Type of Purchase</label>
-                <select class="form-control" id="exampleFormControlSelect1">
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
+                <label for="formControlSelect">Type of Purchase</label>
+                <select class="form-control" id="formControlSelect">
+                 
+                  <option value=""></option>
+                  
+                  <option value="">Groceries</option>
+
+                  <option value="">Resturant</option>
+
+                  <option value=""> Personal Care</option>
+
+                  <option value="">Transportation</option>
+
+                  <option value="">Entertainment</option>
+                  
+                  <option value="">Clothing</option>
+
+                  <option value="">Household Supplies</option>
+
+                  <option value="">Medical</option>
+
+                  <option value="">Gift/Donation</option>
+
                 </select>
               </div>
               <div data-mdb-input-init class="form-outline">
