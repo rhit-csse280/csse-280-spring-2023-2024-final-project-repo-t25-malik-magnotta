@@ -1,8 +1,15 @@
 var budget = budget || {};
-
+budget.FB_USER_COLLECTION = "UserData";
+budget.FB_USER_INCOME = "Income";
+budget.FB_USER_NAME = "Name";
+budget.FB_USER_DATEJOINED = "datejoined";
+budget.FB_USER_LASTMONTHSPENDING = "lastMonthExpenses";
+budget.FB_USER_SAVED = "saved";
+budget.FB_USER_SETASIDE = "setAside";
+budget.FB_USER_ID = "userId";
 budget.UID = null;
 budget.fbAuthManager = null;
-
+budget.fbUserDataManager = null;
 
 
 
@@ -15,15 +22,43 @@ budget.fbAuthManager = null;
 
 budget.UserDataManager = class {
 	constructor(){
-		
+		this._ref = firebase.firestore().collection(budget.FB_USER_COLLECTION);
+	}
+	add(income, name){
+		this._ref.add({
+			[budget.FB_USER_INCOME]: income,
+			[budget.FB_USER_NAME]: name,
+			[budget.FB_USER_DATEJOINED]: firebase.firestore.Timestamp.now(),
+			[budget.FB_USER_LASTMONTHSPENDING]: 0,
+			[budget.FB_USER_SAVED]: 0,
+			[budget.FB_USER_SETASIDE]: 0,
+			[budget.FB_USER_ID]: budget.fbAuthManager.uid
+		})
+	}
+	checkIfUserExists(uid){
+		let exists = null;
+		let query = this._ref.where(budget.FB_USER_ID, "==", uid).get().then(snapshot => {
+			exists = snapshot.docs[0];
+		});
+		return !!exists;
 	}
 }
 
-budget.UserData = class {
+budget.UserDataController = class {
 
 	constructor(){
+		this.name = document.querySelector("#inputName");
+		this.income = document.querySelector("#inputIncome");
 
+		document.querySelector("#enterButton").onclick = (event) => {
+			budget.fbUserDataManager.add(this.income.value, this.name.value);
+		}
+
+		document.querySelector("#cancelButton").onclick = (event) => {
+			budget.fbAuthManager.signOut();
+		}
 	}
+
 }
 
 budget.PurchasesManager = class {
@@ -104,10 +139,17 @@ budget.LoginPageController = class {
 
 budget.checkForRedirects = function(){
 	if(document.querySelector("#loginPage") && budget.fbAuthManager.isSignedIn){
-		window.location.href = "/home.html";
+		
+		window.location.href = `/home.html?uid=${budget.fbAuthManager.uid}`;
+		if(!budget.fbUserDataManager.checkIfUserExists(budget.fbAuthManager.uid)){
+			window.location.href = "/entry.html";
+		}
 	}
 	if(!document.querySelector("#loginPage") && !budget.fbAuthManager.isSignedIn){
 		window.location.href = "/";
+	}
+	if(document.querySelector("#entryPage") && budget.fbUserDataManager.checkIfUserExists(budget.fbAuthManager.uid)){
+		window.location.href = `/home.html?uid=${budget.fbAuthManager.uid}`;
 	}
 }
 
@@ -180,6 +222,10 @@ initializePage = () => {
 		console.log("Stats Page");
 		new budget.StatsPageController();
 	}
+	else if(document.querySelector("#entryPage")){
+		console.log("Entry Page");
+		new budget.UserDataController();
+	}
 	else if(document.querySelector("#purchasesPage")){
 		console.log("Purchases Page");
 
@@ -193,6 +239,7 @@ initializePage = () => {
 budget.main = function () {
 	console.log("Ready");
 	budget.fbAuthManager = new budget.FbAuthManager();
+	budget.fbUserDataManager = new budget.UserDataManager();
 	budget.fbAuthManager.beginListening(() => {
 		budget.checkForRedirects();
 		initializePage();

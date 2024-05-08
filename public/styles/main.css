@@ -14,7 +14,7 @@ body {
 #signInButtons {
     display: flex;
     justify-content: center;
-    margin-top: 450px;
+    margin-top: 300px;
 }
 
 .authButton {
