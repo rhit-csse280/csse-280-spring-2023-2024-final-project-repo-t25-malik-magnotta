@@ -31,15 +31,17 @@
   <div id="purchasesPage" class="container page-container">
 
     <h1 id="spendingCount">Total Spent: $0</h1>
-    <div  id="nullPurchase" style="text-align: center;">
+    <button id="purchaseHomeBtn">HOME</button>
+    
+    <div  id="purchasesListContainer" style="text-align: center;">
       No Data
     </div>
   
-    <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#addQuoteDialog">
+    <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#addPurchaseDialog">
       <i class="material-icons">add</i>
     </button>
 
-    <div class="modal fade" id="addQuoteDialog" tabindex="-1" role="dialog">
+    <div class="modal fade" id="addPurchaseDialog" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -49,26 +51,24 @@
             <div class="form-group">
                 <label for="formControlSelect">Type of Purchase</label>
                 <select class="form-control" id="formControlSelect">
-                 
-                  <option value=""></option>
                   
-                  <option value="">Groceries</option>
+                  <option value="0">Groceries</option>
 
-                  <option value="">Resturant</option>
+                  <option value="1">Resturant</option>
 
-                  <option value=""> Personal Care</option>
+                  <option value="2"> Personal Care</option>
 
-                  <option value="">Transportation</option>
+                  <option value="3">Transportation</option>
 
-                  <option value="">Entertainment</option>
+                  <option value="4">Entertainment</option>
                   
-                  <option value="">Clothing</option>
+                  <option value="5">Clothing</option>
 
-                  <option value="">Household Supplies</option>
+                  <option value="6">Household Supplies</option> 
 
-                  <option value="">Medical</option>
+                  <option value="7">Medical</option>
 
-                  <option value="">Gift/Donation</option>
+                  <option value="8">Gift/Donation</option>
 
                 </select>
               </div>

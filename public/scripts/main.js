@@ -1,5 +1,7 @@
 var budget = budget || {};
 budget.FB_USER_COLLECTION = "UserData";
+budget.FB_PURCHASES_COLLECTION = "Purchases";
+budget.FB_RECURRING_COLLECTION = "Recurring";
 budget.FB_USER_INCOME = "Income";
 budget.FB_USER_NAME = "Name";
 budget.FB_USER_DATEJOINED = "datejoined";
@@ -7,18 +9,28 @@ budget.FB_USER_LASTMONTHSPENDING = "lastMonthExpenses";
 budget.FB_USER_SAVED = "saved";
 budget.FB_USER_SETASIDE = "setAside";
 budget.FB_USER_ID = "userId";
+budget.FB_DOP = "dateOfPurchase";
+budget.FB_PURCHASE_TYPE = "purchaseType"
+budget.FB_COST = "cost";
 budget.UID = null;
+
+
+
 budget.fbAuthManager = null;
 budget.fbUserDataManager = null;
+budget.purchasesManager = null;
+
+budget.purchaseValues = ["Groceries", "Resturant", "Personal Care","Transportation","Entertainment","Clothing","Household Supplies","Medical","Gift/Donation"];
 
 
 
 
-
-
-
-
-
+function htmlToElement(html) {
+	var template = document.createElement('template');
+	html = html.trim();
+	template.innerHTML = html;
+	return template.content.firstChild;
+}
 
 budget.UserDataManager = class {
 	constructor(){
@@ -62,8 +74,52 @@ budget.UserDataController = class {
 }
 
 budget.PurchasesManager = class {
-	constructor(){
-		
+
+	constructor(uid) {
+		this._documentSnapshots = [];
+		this._ref = firebase.firestore().collection(budget.FB_PURCHASES_COLLECTION);
+		this._unsubscribe = null;
+	}
+
+	add(cost,type) {
+		this._ref.add({
+				[budget.FB_COST]: cost,
+				[budget.FB_PURCHASE_TYPE]: type,
+				[budget.FB_DOP]: firebase.firestore.Timestamp.now(),
+				[budget.FB_USER_ID]: budget.fbAuthManager.uid,
+			})
+			.then(function (docRef) {
+				console.log("Document written with ID: ", docRef.id);
+			})
+			.catch(function (error) {
+				console.error("Error adding document: ", error);
+			});
+	}
+
+	beginListening(changeListener) {
+
+		let query = this._ref.orderBy(budget.FB_DOP, "desc");
+		query = query.where(budget.FB_USER_ID, "==", budget.fbAuthManager.uid);
+		this._unsubscribe = query.onSnapshot((querySnapshot) => {
+			this._documentSnapshots = querySnapshot.docs;
+			changeListener();
+		});
+	}
+
+	stopListening() {
+		this._unsubscribe();
+	}
+	get length() {
+		return this._documentSnapshots.length;
+	}
+
+	getpurchaseAtIndex(index) {
+		const docSnapshot = this._documentSnapshots[index];
+		const pur = new budget.Purchase(docSnapshot.id,
+			docSnapshot.get(budget.FB_COST),
+			docSnapshot.get(budget.FB_PURCHASE_TYPE),
+			docSnapshot.get(budget.FB_DOP));
+		return pur;
 	}
 }
 
@@ -74,11 +130,13 @@ budget.PurchaseManager = class {
 }
 
 budget.Purchase = class{
-	constructor(){
-		
+	constructor(id, cost, type,dop) {
+		this.id = id;
+		this.cost = cost;
+		this.type = type;
+		this.dop = dop;
 	}
 }
-
 
 budget.FbAuthManager = class {
 	constructor() {
@@ -124,8 +182,7 @@ budget.LoginPageController = class {
 			  	firebase.auth.EmailAuthProvider.PROVIDER_ID,
 				],
 		  	};
-		//   const ui = new firebaseui.auth.AuthUI(firebase.auth());
-		//   ui.start('#firebaseui-auth-container', uiConfig);
+
 		  const inputEmailEl = document.querySelector("#inputEmail");
 		  const inputPasswordEl = document.querySelector("#inputPassword");
 		  document.querySelector("#signUpButton").onclick = (event) => {
@@ -181,7 +238,6 @@ budget.StatsPageController = class {
 		document.querySelector("#homeButton").onclick = (event) => {
 			window.location.href = "/home.html";
 		}
-
 	}
 
 	createChart(){
@@ -211,6 +267,61 @@ budget.StatsPageController = class {
 	}
 }
 
+budget.PurchasesPageController = class{
+
+	constructor(){
+
+		document.querySelector("#submitAddPurchase").onclick = (event) => {
+			const type = document.querySelector("#formControlSelect").value;
+			const cost = document.querySelector("#typeNumber").value;
+			budget.purchasesManager.add(cost,type);
+		};
+
+		document.querySelector("#purchaseHomeBtn").onclick = (event) => {
+			window.location.href = "/home.html";
+		};
+
+		budget.purchasesManager.beginListening(this.updateList.bind(this));
+	}
+
+	//Change
+	updateList() {
+		const newList = htmlToElement('<div id="purchasesListContainer"></div>');
+		for (let i = 0; i < budget.purchasesManager.length; i++) {
+			const pur = budget.purchasesManager.getpurchaseAtIndex(i);
+			const newCard = this._createCard(pur);
+			newCard.onclick = (event) => {
+				console.log("Clicked");
+			};
+			newList.appendChild(newCard);
+		}
+
+		const oldList = document.querySelector("#purchasesListContainer");
+		oldList.removeAttribute("id");
+		oldList.hidden = true;
+		oldList.parentElement.appendChild(newList);
+	}
+
+	//Change
+	_createCard(purchase) {
+		return htmlToElement(`<div class="card">
+		<div class="card-body">
+			<h5 class="card-title">${purchase.cost}</h5>
+			<h6 class="card-subtitle mb-2 text-muted">${budget.purchaseValues[purchase.type]}</h6>
+		</div>
+	</div>`);
+	}
+
+}
+
+budget.RecurringPageController = class {
+	constructor(){
+		document.querySelector("#recurringHomeBtn").onclick = (event) => {
+			window.location.href = "/home.html";
+		};
+	}
+}
+
 initializePage = () => {
 	if(document.querySelector("#loginPage")){
 		console.log("login Page");
@@ -229,12 +340,10 @@ initializePage = () => {
 		new budget.UserDataController();
 	}
 	else if(document.querySelector("#purchasesPage")){
-		console.log("Purchases Page");
-
+		new budget.PurchasesPageController();
 	}
 	else if(document.querySelector("#recurringPage")){
-		console.log("Purchases Page");
-
+		new budget.RecurringPageController();
 	}
 }
 
@@ -242,10 +351,12 @@ budget.main = function () {
 	console.log("Ready");
 	budget.fbAuthManager = new budget.FbAuthManager();
 	budget.fbUserDataManager = new budget.UserDataManager();
+	budget.purchasesManager = new budget.PurchasesManager();
 	budget.fbAuthManager.beginListening(() => {
 		budget.checkForRedirects();
 		initializePage();
-	})
+	});
+
 };
 
 budget.main();
