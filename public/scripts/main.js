@@ -39,8 +39,6 @@ budget.UserDataManager = class {
 	async checkIfUserExists(uid){
 		let exists = null;
 		let query = await this._ref.where(budget.FB_USER_ID, "==", uid).get();
-		console.log(query);	
-		console.log(uid);
 		return !query.empty;
 		
 	}
