@@ -33,14 +33,15 @@ budget.UserDataManager = class {
 			[budget.FB_USER_SAVED]: 0,
 			[budget.FB_USER_SETASIDE]: 0,
 			[budget.FB_USER_ID]: budget.fbAuthManager.uid
-		})
+		}).then(budget.checkForRedirects());
 	}
-	checkIfUserExists(uid){
+	async checkIfUserExists(uid){
 		let exists = null;
-		let query = this._ref.where(budget.FB_USER_ID, "==", uid).get().then(snapshot => {
-			exists = snapshot.docs[0];
-		});
-		return !!exists;
+		let query = await this._ref.where(budget.FB_USER_ID, "==", uid).get();
+		console.log(query);	
+		console.log(uid);
+		return !query.empty;
+		
 	}
 }
 
@@ -137,18 +138,19 @@ budget.LoginPageController = class {
 	}
 }
 
-budget.checkForRedirects = function(){
+budget.checkForRedirects = async function(){
 	if(document.querySelector("#loginPage") && budget.fbAuthManager.isSignedIn){
-		
-		window.location.href = `/home.html?uid=${budget.fbAuthManager.uid}`;
-		if(!budget.fbUserDataManager.checkIfUserExists(budget.fbAuthManager.uid)){
+			
+		if(!(await budget.fbUserDataManager.checkIfUserExists(budget.fbAuthManager.uid))){
 			window.location.href = "/entry.html";
+		} else{
+			window.location.href = `/home.html?uid=${budget.fbAuthManager.uid}`;
 		}
 	}
 	if(!!!document.querySelector("#loginPage") && !budget.fbAuthManager.isSignedIn){
 		window.location.href = "/";
 	}
-	if(document.querySelector("#entryPage") && budget.fbUserDataManager.checkIfUserExists(budget.fbAuthManager.uid)){
+	if(document.querySelector("#entryPage") && await budget.fbUserDataManager.checkIfUserExists(budget.fbAuthManager.uid)){
 		window.location.href = `/home.html?uid=${budget.fbAuthManager.uid}`;
 	}
 }
