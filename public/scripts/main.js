@@ -33,7 +33,8 @@ budget.UserDataManager = class {
 			[budget.FB_USER_SAVED]: 0,
 			[budget.FB_USER_SETASIDE]: 0,
 			[budget.FB_USER_ID]: budget.fbAuthManager.uid
-		}).then(budget.checkForRedirects());
+		}).then((event) => {
+			budget.checkForRedirects()});
 	}
 	async checkIfUserExists(uid){
 		let exists = null;
