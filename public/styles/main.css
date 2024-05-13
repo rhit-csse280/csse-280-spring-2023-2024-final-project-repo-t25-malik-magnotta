@@ -43,3 +43,30 @@ body {
 #purchaseButtons{
     margin-top: auto;
 }
+
+.btn{
+    border: black solid 1px;
+}
+
+.card {
+    margin: 10px 0;
+}
+
+@media screen and (max-width: 480px) {
+    .scaleText{
+        font-size: medium;
+    }
+    #costDisplay{
+        text-align: start;
+    }
+
+}
+
+@media screen and (min-width: 780px) {
+    .scaleText{
+        font-size: large;
+    }
+    #costDisplay{
+        text-align:end;
+    }
+}

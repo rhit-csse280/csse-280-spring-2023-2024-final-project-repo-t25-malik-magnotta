@@ -14,16 +14,13 @@ budget.FB_PURCHASE_TYPE = "purchaseType"
 budget.FB_COST = "cost";
 budget.UID = null;
 
-
-
 budget.fbAuthManager = null;
 budget.fbUserDataManager = null;
 budget.purchasesManager = null;
 
 budget.purchaseValues = ["Groceries", "Resturant", "Personal Care","Transportation","Entertainment","Clothing","Household Supplies","Medical","Gift/Donation"];
-
-
-
+budget.typeColors = ["red", "red", "red","red","red","red","red","red","red"];
+budget.months = ['January', 'Febuary', 'March', 'April', 'May', 'June','July','August','September','October','November','December'];
 
 function htmlToElement(html) {
 	var template = document.createElement('template');
@@ -134,7 +131,7 @@ budget.Purchase = class{
 		this.id = id;
 		this.cost = cost;
 		this.type = type;
-		this.dop = dop;
+		this.dop = dop.toDate();
 	}
 }
 
@@ -245,7 +242,7 @@ budget.StatsPageController = class {
       	new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: ['January', 'Febuary', 'March', 'April', 'May', 'June','July','August','September','October','November','December'],//this stays constant
+          labels: budget.months,
           datasets: [{
             label: 'Amount Spent',
             data: [12, 19, 3, 5, 2, 3,5,5,5,5,5,5],
@@ -302,14 +299,25 @@ budget.PurchasesPageController = class{
 		oldList.parentElement.appendChild(newList);
 	}
 
-	//Change
+
 	_createCard(purchase) {
 		return htmlToElement(`<div class="card">
-		<div class="card-body">
-			<h5 class="card-title">${purchase.cost}</h5>
-			<h6 class="card-subtitle mb-2 text-muted">${budget.purchaseValues[purchase.type]}</h6>
+		<div class="card-body container">
+		  <div class="row">
+			<div class="col-10 col-md-7 col-lg-3"><p class="scaleText">${budget.purchaseValues[purchase.type]}</p></div>
+			<div class="col-1 col-md-2 col-lg-1" ><div style="border-radius: 50%; border: solid black 1px; height: 25px; width: 25px; background-color: ${budget.typeColors[purchase.type]};"></div></div>
+			<div id="costDisplay" class="col-6 col-md-3 col-lg-8"><p class="scaleText">$${purchase.cost}</p></div>
+		  </div>
+		  <div class="row">
+			<div class="col-10"><h8>Date Of Purchase: ${purchase.dop.getUTCMonth() + 1}/${purchase.dop.getUTCDate()}/${purchase.dop.getFullYear()}</h8></div>
+			<div class="col-2" style="text-align: center;"><h3 class="bi bi-pencil-square"></h3></div>
+		  </div>
 		</div>
-	</div>`);
+	  </div>`);
+	}
+
+	pastYearPurchases(){
+
 	}
 
 }

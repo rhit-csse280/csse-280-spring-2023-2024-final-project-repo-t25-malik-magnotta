@@ -6,40 +6,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
   <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="styles/main.css">
   <title>Budget Tracker</title>
 </head>
 
 <body>
-<!-- 
-</nav> -->
-<!-- <div id="purchasePage" class="container page-container">
-  <h1 id="spendingCount">Total Spent: $0</h1> -->
-  <!-- for the list of difrent types of purchases -->
-  <!-- <div  id="nullPurchase" style="text-align: center;">
-      No Data
-  </div>
-  <br>
-  <div id="purchaseButtons" style="text-align: center;">
-      <button id="homeButton" class="btn" style="border: solid black 2px; border-radius: 5%;">Home</button>
-      <button id="addButton" class="btn" style="border: solid black 2px; border-radius: 5%;">Add</button>
-  </div> -->
   <nav class="navbar navbar-dark fixed-top">
     <a class="navbar-brand" href="#">Budget Tracker</a>
 
   </nav>
-  <div id="recurringPage" class="container page-container">
-    <button id="recurringHomeBtn">HOME</button>
+  <div id="purchasesPage" class="container page-container">
 
-    <div  id="nullPurchase" style="text-align: center;">
-      No Data
+    <h1> Your Purchases</h1>
+
+    <h3 id="spendingCount">Total Spent: $0</h3>
+   
+    <button id="purchaseHomeBtn" type="button" class="btn">HOME</button>
+    
+
+    <div  id="purchasesListContainer" style="text-align: center;">
+      Retriving Data...
     </div>
   
-    <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#addQuoteDialog">
+    <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#addPurchaseDialog">
       <i class="material-icons">add</i>
     </button>
 
-    <div class="modal fade" id="addQuoteDialog" tabindex="-1" role="dialog">
+    <div class="modal fade" id="addPurchaseDialog" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -47,8 +41,6 @@
           </div>
           <div class="modal-body">
             <div class="form-group">
-                <label for="formControlSelect">Name of Purchase</label>
-                <input class="form-control"/>
               </div>
               <div data-mdb-input-init class="form-outline">
                 <label class="bmd-label-floating" for="typeNumber">Cost</label>
