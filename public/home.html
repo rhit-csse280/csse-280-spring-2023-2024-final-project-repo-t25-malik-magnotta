@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
   <link rel="stylesheet" href="styles/main.css">
   <title>Budgetter</title>
@@ -24,7 +25,22 @@
         <h2 style="text-align: center; vertical-align: bottom; color:white;">J</h2>
       </div>
     </div>
-    <br>
+    <div align="right">
+    <div class="dropdown pull-xs-right">
+      <button class="btn bmd-btn-icon dropdown-toggle" type="button" id="lr1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="material-icons">more_vert</i>
+      <div class="ripple-container"></div></button>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="lr1">
+        <button id="menuEdit" class="dropdown-item" type="button" 
+        data-toggle="modal" data-target="#editQuoteDialog">
+        <span class="material-symbols-outlined">
+          person
+          </span>&nbsp;&nbsp;&nbsp;User Info</button>
+        <button id="menuSignOut" class="dropdown-item" type="button">
+        <i class="material-icons">logout</i>&nbsp;&nbsp;&nbsp;Sign Out</button>
+      </div>
+      </div>
+    </div>
     <br>
     <div> <!--This div is for the Budget used bar--> 
       <h1 style="text-align: center; margin-bottom: 5%;font-weight: bolder;">Budget Used</h1>
