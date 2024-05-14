@@ -45,14 +45,13 @@ body {
 }
 
 .btn{
-    border: black solid 1px;
 }
 
 .card {
-    margin: 10px 0;
+    margin: 30px 0;
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (min-width: 0px) {
     .scaleText{
         font-size: medium;
     }
@@ -62,6 +61,7 @@ body {
 
 }
 
+
 @media screen and (min-width: 780px) {
     .scaleText{
         font-size: large;
@@ -69,4 +69,20 @@ body {
     #costDisplay{
         text-align:end;
     }
+}
+
+#fab {
+    z-index: 998;
+    background-color: #00c247;
+    color: white;
+    border: none;
+}
+
+#fab:active {
+    transform: translateY(2px);
+    opacity: 0.8;
+}
+
+#purchaseHomeBtn{
+    z-index: 998;
 }

@@ -18,38 +18,37 @@
   </nav>
   <div id="purchasesPage" class="container page-container">
 
-    <h1> Your Purchases</h1>
-
-    <h3 id="spendingCount">Total Spent: $0</h3>
+    <h1> Recurring Costs</h1>
    
-    <button id="purchaseHomeBtn" type="button" class="btn">HOME</button>
-    
-
-    <div  id="purchasesListContainer" style="text-align: center;">
-      Retriving Data...
-    </div>
+    <button id="recurringHomeBtn" type="button" class="btn">HOME</button>
   
     <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#addPurchaseDialog">
       <i class="material-icons">add</i>
     </button>
 
+    <div  id="recurringListContainer" style="text-align: center;">
+      Retriving Data...
+    </div>
+
     <div class="modal fade" id="addPurchaseDialog" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add Purchase</h5>
+            <h5 class="modal-title">Add Recurring Cost</h5>
           </div>
           <div class="modal-body">
             <div class="form-group">
+                <label for="formControlSelect">Name</label>
+                <input type="text" class="form-control" id="nameOfRecurringCost">
               </div>
               <div data-mdb-input-init class="form-outline">
-                <label class="bmd-label-floating" for="typeNumber">Cost</label>
+                <label class="bmd-label-floating" for="typeNumber">Amount</label>
                 <input type="number" id="typeNumber" class="form-control" step="0.01" />
             </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>
-            <button type="button" id="submitAddPurchase" class="btn btn-primary" data-dismiss="modal">SUBMIT</button>
+            <button type="button" id="submitAddRecurring" class="btn btn-primary" data-dismiss="modal">SUBMIT</button>
           </div>
         </div>
      </div>

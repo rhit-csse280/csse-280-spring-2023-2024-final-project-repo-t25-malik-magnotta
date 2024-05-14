@@ -12,27 +12,35 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-dark fixed-top">
+  <nav class="navbar navbar-dark fixed-top" style="z-index: 999;">
     <a class="navbar-brand" href="#">Budget Tracker</a>
 
   </nav>
   <div id="purchasesPage" class="container page-container">
 
-    <h1> Your Purchases</h1>
+    <h1 id="spendingCount">Total Spent: $0</h1>
 
-    <h3 id="spendingCount">Total Spent: $0</h3>
+    <br>
    
-    <button id="purchaseHomeBtn" type="button" class="btn">HOME</button>
-    
+    <div class="container">
+      <div class="row">
 
+       <div class="d-flex justify-content-start col">
+          <button id="purchaseHomeBtn" type="button" class="btn" style="border: solid black 1px;">HOME</button>
+       </div> 
+        <div class="d-flex justify-content-end col">
+          <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#addPurchaseDialog">
+            <i class="material-icons">add</i>
+        </button>
+        </div>
+
+      </div>
+    </div>
+  
     <div  id="purchasesListContainer" style="text-align: center;">
       Retriving Data...
     </div>
   
-    <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#addPurchaseDialog">
-      <i class="material-icons">add</i>
-    </button>
-
     <div class="modal fade" id="addPurchaseDialog" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -69,6 +77,45 @@
                 <input type="number" id="typeNumber" class="form-control" step="0.01" />
             </div>
           </div>
+
+          <div class="modal fade" id="editPurchaseDialog" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit Purchase</h5>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group">
+                      <label for="editFormControlSelect">Type of Purchase</label>
+                      <select class="form-control" id="editFormControlSelect">
+                        
+                        <option value="0">Groceries</option>
+      
+                        <option value="1">Resturant</option>
+      
+                        <option value="2"> Personal Care</option>
+      
+                        <option value="3">Transportation</option>
+      
+                        <option value="4">Entertainment</option>
+                        
+                        <option value="5">Clothing</option>
+      
+                        <option value="6">Household Supplies</option> 
+      
+                        <option value="7">Medical</option>
+      
+                        <option value="8">Gift/Donation</option>
+      
+                      </select>
+                    </div>
+                    <div data-mdb-input-init class="form-outline">
+                      <label class="bmd-label-floating" for="typeNumber">Cost</label>
+                      <input type="number" id="typeNumber" class="form-control" step="0.01" />
+                  </div>
+                </div>
+
+
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>
             <button type="button" id="submitAddPurchase" class="btn btn-primary" data-dismiss="modal">SUBMIT</button>
@@ -76,7 +123,6 @@
         </div>
      </div>
     </div>
-   
 
   </div>
   <script src="scripts/jquery.min.js"></script>

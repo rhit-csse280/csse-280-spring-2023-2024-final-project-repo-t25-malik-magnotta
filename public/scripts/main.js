@@ -17,9 +17,10 @@ budget.UID = null;
 budget.fbAuthManager = null;
 budget.fbUserDataManager = null;
 budget.purchasesManager = null;
+budget.recurringManager = null;
 
 budget.purchaseValues = ["Groceries", "Resturant", "Personal Care","Transportation","Entertainment","Clothing","Household Supplies","Medical","Gift/Donation"];
-budget.typeColors = ["red", "red", "red","red","red","red","red","red","red"];
+budget.typeColors = ["#3ac568", "#d72828", "#8d41be","#eb7d14","#0bb0f4","#e7184e","#99e817","#ff0100","#16e9ad"];
 budget.months = ['January', 'Febuary', 'March', 'April', 'May', 'June','July','August','September','October','November','December'];
 
 function htmlToElement(html) {
@@ -118,6 +119,23 @@ budget.PurchasesManager = class {
 			docSnapshot.get(budget.FB_DOP));
 		return pur;
 	}
+
+	getTotal(){
+		let total = 0;
+		let today = new Date(Date.now());
+		for(let x = 0; x < this._documentSnapshots.length;x++){
+			let s = this.getpurchaseAtIndex(x);
+			if(s.dop.getUTCMonth() < today.getUTCMonth() || s.dop.getUTCMonth() > today.getUTCMonth())
+				continue;
+			total = total + parseFloat(s.cost);
+		}
+		return total;
+	}
+
+	getTotalsFromPastYear(){
+		let list = [];
+		
+	}
 }
 
 budget.PurchaseManager = class {
@@ -132,6 +150,15 @@ budget.Purchase = class{
 		this.cost = cost;
 		this.type = type;
 		this.dop = dop.toDate();
+	}
+}
+
+budget.Recurring = class{
+	constructor(id,cost,name,recDate){
+		this.id = id;
+		this.cost = cost;
+		this.name = name;
+		this.recDate = recDate;
 	}
 }
 
@@ -210,9 +237,6 @@ budget.checkForRedirects = async function(){
 
 budget.HomePageController = class {
 	constructor() {
-		document.querySelector("#signOutButton").onclick = (event) => {
-			budget.fbAuthManager.signOut();
-		}
 
 		document.querySelector("#purchasesPageButton").onclick = (event) => {
 			window.location.href = "/purchases.html";
@@ -224,6 +248,12 @@ budget.HomePageController = class {
 
 		document.querySelector("#statsPageButton").onclick = (event) => {
 			window.location.href = "/stats.html";
+		}
+		document.querySelector("#menuSignOut").onclick = (event) => {
+			budget.fbAuthManager.signOut();
+		}
+		document.querySelector("menuUserInfo").onclick = (event) => {
+			window.location.href = "/info.html";
 		}
 	}
 }
@@ -281,11 +311,14 @@ budget.PurchasesPageController = class{
 		budget.purchasesManager.beginListening(this.updateList.bind(this));
 	}
 
-	//Change
 	updateList() {
+		document.querySelector("#spendingCount").innerHTML = `Total Spent: $${budget.purchasesManager.getTotal()}`;
+		const today = new Date(Date.now());
 		const newList = htmlToElement('<div id="purchasesListContainer"></div>');
 		for (let i = 0; i < budget.purchasesManager.length; i++) {
 			const pur = budget.purchasesManager.getpurchaseAtIndex(i);
+			if(pur.dop.getUTCMonth() < today.getUTCMonth() || pur.dop.getUTCMonth() > today.getUTCMonth())
+				continue;
 			const newCard = this._createCard(pur);
 			newCard.onclick = (event) => {
 				console.log("Clicked");
@@ -305,30 +338,73 @@ budget.PurchasesPageController = class{
 		<div class="card-body container">
 		  <div class="row">
 			<div class="col-10 col-md-7 col-lg-3"><p class="scaleText">${budget.purchaseValues[purchase.type]}</p></div>
-			<div class="col-1 col-md-2 col-lg-1" ><div style="border-radius: 50%; border: solid black 1px; height: 25px; width: 25px; background-color: ${budget.typeColors[purchase.type]};"></div></div>
+			<div class="col-1 col-md-2 col-lg-1" ><div style="border-radius: 50%; height: 25px; width: 25px; background-color: ${budget.typeColors[purchase.type]};"></div></div>
 			<div id="costDisplay" class="col-6 col-md-3 col-lg-8"><p class="scaleText">$${purchase.cost}</p></div>
 		  </div>
 		  <div class="row">
 			<div class="col-10"><h8>Date Of Purchase: ${purchase.dop.getUTCMonth() + 1}/${purchase.dop.getUTCDate()}/${purchase.dop.getFullYear()}</h8></div>
-			<div class="col-2" style="text-align: center;"><h3 class="bi bi-pencil-square"></h3></div>
+			<div class="col-2" style="text-align: center;"><h3 value="${purchase.id}" class="bi bi-pencil-square"></h3></div>
 		  </div>
 		</div>
 	  </div>`);
 	}
-
-	pastYearPurchases(){
-
-	}
-
 }
 
-budget.RecurringPageController = class {
+budget.RecurringPageController = class{
+
 	constructor(){
+
+		document.querySelector("#submitAddRecurring").onclick = (event) => {
+			const type = document.querySelector("#formControlSelect").value;
+			const cost = document.querySelector("#typeNumber").value;
+			budget.purchasesManager.add(cost,type);
+		};
+
 		document.querySelector("#recurringHomeBtn").onclick = (event) => {
 			window.location.href = "/home.html";
 		};
+
+		budget.recurringManager.beginListening(this.updateList.bind(this));
+	}
+
+	updateList() {
+		const today = new Date(Date.now());
+		const newList = htmlToElement('<div id="purchasesListContainer"></div>');
+		for (let i = 0; i < budget.purchasesManager.length; i++) {
+			const pur = budget.purchasesManager.getpurchaseAtIndex(i);
+			if(pur.dop.getUTCMonth() < today.getUTCMonth() || pur.dop.getUTCMonth() > today.getUTCMonth())
+				continue;
+			const newCard = this._createCard(pur);
+			newCard.onclick = (event) => {
+				console.log("Clicked");
+			};
+			newList.appendChild(newCard);
+		}
+
+		const oldList = document.querySelector("#purchasesListContainer");
+		oldList.removeAttribute("id");
+		oldList.hidden = true;
+		oldList.parentElement.appendChild(newList);
+	}
+
+
+	_createCard(purchase) {
+		return htmlToElement(`<div class="card">
+		<div class="card-body container">
+		  <div class="row">
+			<div class="col-10 col-md-7 col-lg-3"><p class="scaleText">${budget.purchaseValues[purchase.type]}</p></div>
+			<div class="col-1 col-md-2 col-lg-1" ><div style="border-radius: 50%; height: 25px; width: 25px; background-color: ${budget.typeColors[purchase.type]};"></div></div>
+			<div id="costDisplay" class="col-6 col-md-3 col-lg-8"><p class="scaleText">$${purchase.cost}</p></div>
+		  </div>
+		  <div class="row">
+			<div class="col-10"><h8>Date Of Purchase: ${purchase.dop.getUTCMonth() + 1}/${purchase.dop.getUTCDate()}/${purchase.dop.getFullYear()}</h8></div>
+			<div class="col-2" style="text-align: center;"><h3 value="${purchase.id}" class="bi bi-pencil-square"></h3></div>
+		  </div>
+		</div>
+	  </div>`);
 	}
 }
+
 
 initializePage = () => {
 	if(document.querySelector("#loginPage")){
@@ -360,6 +436,7 @@ budget.main = function () {
 	budget.fbAuthManager = new budget.FbAuthManager();
 	budget.fbUserDataManager = new budget.UserDataManager();
 	budget.purchasesManager = new budget.PurchasesManager();
+	budget.recurringManager = new budget.recurringManager();
 	budget.fbAuthManager.beginListening(() => {
 		budget.checkForRedirects();
 		initializePage();
