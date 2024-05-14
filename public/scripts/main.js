@@ -138,6 +138,73 @@ budget.PurchasesManager = class {
 	}
 }
 
+budget.RecurringManager = class {
+
+	constructor(uid) {
+		this._documentSnapshots = [];
+		this._ref = firebase.firestore().collection(budget.FB_PURCHASES_COLLECTION);
+		this._unsubscribe = null;
+	}
+
+	add(cost,type) {
+		this._ref.add({
+				[budget.FB_COST]: cost,
+				[budget.FB_PURCHASE_TYPE]: type,
+				[budget.FB_DOP]: firebase.firestore.Timestamp.now(),
+				[budget.FB_USER_ID]: budget.fbAuthManager.uid,
+			})
+			.then(function (docRef) {
+				console.log("Document written with ID: ", docRef.id);
+			})
+			.catch(function (error) {
+				console.error("Error adding document: ", error);
+			});
+	}
+
+	beginListening(changeListener) {
+
+		let query = this._ref.orderBy(budget.FB_DOP, "desc");
+		query = query.where(budget.FB_USER_ID, "==", budget.fbAuthManager.uid);
+		this._unsubscribe = query.onSnapshot((querySnapshot) => {
+			this._documentSnapshots = querySnapshot.docs;
+			changeListener();
+		});
+	}
+
+	stopListening() {
+		this._unsubscribe();
+	}
+	get length() {
+		return this._documentSnapshots.length;
+	}
+
+	getpurchaseAtIndex(index) {
+		const docSnapshot = this._documentSnapshots[index];
+		const pur = new budget.Purchase(docSnapshot.id,
+			docSnapshot.get(budget.FB_COST),
+			docSnapshot.get(budget.FB_PURCHASE_TYPE),
+			docSnapshot.get(budget.FB_DOP));
+		return pur;
+	}
+
+	getTotal(){
+		let total = 0;
+		let today = new Date(Date.now());
+		for(let x = 0; x < this._documentSnapshots.length;x++){
+			let s = this.getpurchaseAtIndex(x);
+			if(s.dop.getUTCMonth() < today.getUTCMonth() || s.dop.getUTCMonth() > today.getUTCMonth())
+				continue;
+			total = total + parseFloat(s.cost);
+		}
+		return total;
+	}
+
+	getTotalsFromPastYear(){
+		let list = [];
+		
+	}
+}
+
 budget.PurchaseManager = class {
 	constructor(){
 		
@@ -154,11 +221,12 @@ budget.Purchase = class{
 }
 
 budget.Recurring = class{
-	constructor(id,cost,name,recDate){
+	constructor(id,cost,name,recDate,startDate){
 		this.id = id;
 		this.cost = cost;
 		this.name = name;
 		this.recDate = recDate;
+		this.startDate = startDate;
 	}
 }
 
@@ -252,7 +320,7 @@ budget.HomePageController = class {
 		document.querySelector("#menuSignOut").onclick = (event) => {
 			budget.fbAuthManager.signOut();
 		}
-		document.querySelector("menuUserInfo").onclick = (event) => {
+		document.querySelector("#menuUserInfo").onclick = (event) => {
 			window.location.href = "/info.html";
 		}
 	}
@@ -321,11 +389,10 @@ budget.PurchasesPageController = class{
 				continue;
 			const newCard = this._createCard(pur);
 			newCard.onclick = (event) => {
-				console.log("Clicked");
+				$('#editPurchaseDialog').modal("show");
 			};
 			newList.appendChild(newCard);
 		}
-
 		const oldList = document.querySelector("#purchasesListContainer");
 		oldList.removeAttribute("id");
 		oldList.hidden = true;
@@ -369,9 +436,9 @@ budget.RecurringPageController = class{
 
 	updateList() {
 		const today = new Date(Date.now());
-		const newList = htmlToElement('<div id="purchasesListContainer"></div>');
+		const newList = htmlToElement('<div id="recurringListContainer"></div>');
 		for (let i = 0; i < budget.purchasesManager.length; i++) {
-			const pur = budget.purchasesManager.getpurchaseAtIndex(i);
+			const rec = budget.purchasesManager.getrecurringAtIndex(i);
 			if(pur.dop.getUTCMonth() < today.getUTCMonth() || pur.dop.getUTCMonth() > today.getUTCMonth())
 				continue;
 			const newCard = this._createCard(pur);
@@ -381,13 +448,13 @@ budget.RecurringPageController = class{
 			newList.appendChild(newCard);
 		}
 
-		const oldList = document.querySelector("#purchasesListContainer");
+		const oldList = document.querySelector("#recurringListContainer");
 		oldList.removeAttribute("id");
 		oldList.hidden = true;
 		oldList.parentElement.appendChild(newList);
 	}
 
-
+	//Edit
 	_createCard(purchase) {
 		return htmlToElement(`<div class="card">
 		<div class="card-body container">
@@ -436,7 +503,7 @@ budget.main = function () {
 	budget.fbAuthManager = new budget.FbAuthManager();
 	budget.fbUserDataManager = new budget.UserDataManager();
 	budget.purchasesManager = new budget.PurchasesManager();
-	budget.recurringManager = new budget.recurringManager();
+	budget.recurringManager = new budget.RecurringManager();
 	budget.fbAuthManager.beginListening(() => {
 		budget.checkForRedirects();
 		initializePage();

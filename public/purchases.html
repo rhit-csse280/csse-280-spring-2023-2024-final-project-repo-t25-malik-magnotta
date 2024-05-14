@@ -77,46 +77,7 @@
                 <input type="number" id="typeNumber" class="form-control" step="0.01" />
             </div>
           </div>
-
-          <div class="modal fade" id="editPurchaseDialog" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title">Edit Purchase</h5>
-                </div>
-                <div class="modal-body">
-                  <div class="form-group">
-                      <label for="editFormControlSelect">Type of Purchase</label>
-                      <select class="form-control" id="editFormControlSelect">
-                        
-                        <option value="0">Groceries</option>
-      
-                        <option value="1">Resturant</option>
-      
-                        <option value="2"> Personal Care</option>
-      
-                        <option value="3">Transportation</option>
-      
-                        <option value="4">Entertainment</option>
-                        
-                        <option value="5">Clothing</option>
-      
-                        <option value="6">Household Supplies</option> 
-      
-                        <option value="7">Medical</option>
-      
-                        <option value="8">Gift/Donation</option>
-      
-                      </select>
-                    </div>
-                    <div data-mdb-input-init class="form-outline">
-                      <label class="bmd-label-floating" for="typeNumber">Cost</label>
-                      <input type="number" id="typeNumber" class="form-control" step="0.01" />
-                  </div>
-                </div>
-
-
-          <div class="modal-footer">
+            <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>
             <button type="button" id="submitAddPurchase" class="btn btn-primary" data-dismiss="modal">SUBMIT</button>
           </div>
@@ -124,7 +85,51 @@
      </div>
     </div>
 
-  </div>
+    <div class="modal fade" id="editPurchaseDialog" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Purchase</h5>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+                <label for="editFormControlSelect">Type of Purchase</label>
+                <select class="form-control" id="editFormControlSelect">
+                  
+                  <option value="0">Groceries</option>
+
+                  <option value="1">Resturant</option>
+
+                  <option value="2"> Personal Care</option>
+
+                  <option value="3">Transportation</option>
+
+                  <option value="4">Entertainment</option>
+                  
+                  <option value="5">Clothing</option>
+
+                  <option value="6">Household Supplies</option> 
+
+                  <option value="7">Medical</option>
+
+                  <option value="8">Gift/Donation</option>
+
+                </select>
+               </div>
+                <div data-mdb-input-init class="form-outline">
+                  <label class="bmd-label-floating" for="typeNumber">Cost</label>
+                  <input type="number" id="typeNumber" class="form-control" step="0.01" />
+              </div>
+           </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>
+             <button type="button" id="submitAddPurchase" class="btn btn-primary" data-dismiss="modal">SUBMIT</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</div>
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/popper.js"></script>
   <script src="scripts/bootstrap-material-design.js"></script>
