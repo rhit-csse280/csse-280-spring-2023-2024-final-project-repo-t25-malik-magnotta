@@ -19,6 +19,13 @@ budget.fbUserDataManager = null;
 budget.purchasesManager = null;
 budget.recurringManager = null;
 
+budget.purchasesPageController = null;
+budget.recurringPageController = null;
+budget.homePageController = null;
+budget.statsPageController = null;
+budget.userDataController = null;
+budget.loginPageController = null;
+
 budget.purchaseValues = ["Groceries", "Resturant", "Personal Care","Transportation","Entertainment","Clothing","Household Supplies","Medical","Gift/Donation"];
 budget.typeColors = ["#3ac568", "#d72828", "#8d41be","#eb7d14","#0bb0f4","#e7184e","#99e817","#ff0100","#16e9ad"];
 budget.months = ['January', 'Febuary', 'March', 'April', 'May', 'June','July','August','September','October','November','December'];
@@ -94,6 +101,24 @@ budget.PurchasesManager = class {
 			});
 	}
 
+	edit(id,cost,type){
+		this._ref.doc(id).update(
+			{
+				[budget.FB_COST]: cost,
+				[budget.FB_PURCHASE_TYPE]: type,
+			}
+		).then(function (docRef) {
+			console.log("Document edited with ID: ", docRef.id);
+		})
+		.catch(function (error) {
+			console.error("Error editing document: ", error);
+		});
+	}
+
+	delete(id){
+		this._ref.doc(id).delete();
+	}
+
 	beginListening(changeListener) {
 
 		let query = this._ref.orderBy(budget.FB_DOP, "desc");
@@ -120,20 +145,22 @@ budget.PurchasesManager = class {
 		return pur;
 	}
 
-	getTotal(){
+	getTotal(date){
 		let total = 0;
-		let today = new Date(Date.now());
 		for(let x = 0; x < this._documentSnapshots.length;x++){
 			let s = this.getpurchaseAtIndex(x);
-			if(s.dop.getUTCMonth() < today.getUTCMonth() || s.dop.getUTCMonth() > today.getUTCMonth())
+			if(s.dop.getUTCMonth() < date.getUTCMonth() || s.dop.getUTCMonth() > date.getUTCMonth())
 				continue;
 			total = total + parseFloat(s.cost);
 		}
 		return total;
 	}
-
+	
+	//For graph
 	getTotalsFromPastYear(){
-		let list = [];
+		let list = [0,0,0,0,0,0,0,0,0,0,0,0];
+		let today = new Date(Date.now());
+		//for(let x = ; x > )
 		
 	}
 }
@@ -142,10 +169,11 @@ budget.RecurringManager = class {
 
 	constructor(uid) {
 		this._documentSnapshots = [];
-		this._ref = firebase.firestore().collection(budget.FB_PURCHASES_COLLECTION);
+		this._ref = firebase.firestore().collection(budget.FB_RECURRING_COLLECTION);
 		this._unsubscribe = null;
 	}
 
+	//edit
 	add(cost,type) {
 		this._ref.add({
 				[budget.FB_COST]: cost,
@@ -161,6 +189,7 @@ budget.RecurringManager = class {
 			});
 	}
 
+	
 	beginListening(changeListener) {
 
 		let query = this._ref.orderBy(budget.FB_DOP, "desc");
@@ -174,10 +203,12 @@ budget.RecurringManager = class {
 	stopListening() {
 		this._unsubscribe();
 	}
+
 	get length() {
 		return this._documentSnapshots.length;
 	}
 
+	//edit
 	getpurchaseAtIndex(index) {
 		const docSnapshot = this._documentSnapshots[index];
 		const pur = new budget.Purchase(docSnapshot.id,
@@ -187,6 +218,7 @@ budget.RecurringManager = class {
 		return pur;
 	}
 
+	//edit
 	getTotal(){
 		let total = 0;
 		let today = new Date(Date.now());
@@ -199,10 +231,6 @@ budget.RecurringManager = class {
 		return total;
 	}
 
-	getTotalsFromPastYear(){
-		let list = [];
-		
-	}
 }
 
 budget.PurchaseManager = class {
@@ -364,6 +392,8 @@ budget.StatsPageController = class {
 
 budget.PurchasesPageController = class{
 
+	lastClicked = null;
+	
 	constructor(){
 
 		document.querySelector("#submitAddPurchase").onclick = (event) => {
@@ -376,11 +406,21 @@ budget.PurchasesPageController = class{
 			window.location.href = "/home.html";
 		};
 
+		document.getElementById("submitEditPurchase").addEventListener("click",(event)=>{
+			const type = document.querySelector("#editFormControlSelect").value;
+			const cost = document.querySelector("#editTypeNumber").value;
+			budget.purchasesManager.edit(this.lastClicked,cost,type);
+		});
+
+		document.getElementById("deletePurchase").addEventListener("click",(event)=>{
+			budget.purchasesManager.delete(this.lastClicked);
+		});
+
 		budget.purchasesManager.beginListening(this.updateList.bind(this));
 	}
 
 	updateList() {
-		document.querySelector("#spendingCount").innerHTML = `Total Spent: $${budget.purchasesManager.getTotal()}`;
+		document.querySelector("#spendingCount").innerHTML = `Total Spent: $${budget.purchasesManager.getTotal(new Date(Date.now()))}`;
 		const today = new Date(Date.now());
 		const newList = htmlToElement('<div id="purchasesListContainer"></div>');
 		for (let i = 0; i < budget.purchasesManager.length; i++) {
@@ -390,6 +430,7 @@ budget.PurchasesPageController = class{
 			const newCard = this._createCard(pur);
 			newCard.onclick = (event) => {
 				$('#editPurchaseDialog').modal("show");
+				this.lastClicked = pur.id;
 			};
 			newList.appendChild(newCard);
 		}
@@ -415,6 +456,10 @@ budget.PurchasesPageController = class{
 		</div>
 	  </div>`);
 	}
+
+	get lastClicked(){
+		return this.lastClicked;
+	}
 }
 
 budget.RecurringPageController = class{
@@ -431,6 +476,17 @@ budget.RecurringPageController = class{
 			window.location.href = "/home.html";
 		};
 
+		document.getElementById("submitEditRecurring").addEventListener("click",(event)=>{
+			const type = document.querySelector("#editFormControlSelect").value;
+			const cost = document.querySelector("#editTypeNumber").value;
+			budget.purchasesManager.edit(this.lastClicked,cost,type);
+		});
+
+		document.getElementById("deleteRecurring").addEventListener("click",(event)=>{
+			budget.purchasesManager.delete(this.lastClicked);
+		});
+
+
 		budget.recurringManager.beginListening(this.updateList.bind(this));
 	}
 
@@ -439,15 +495,13 @@ budget.RecurringPageController = class{
 		const newList = htmlToElement('<div id="recurringListContainer"></div>');
 		for (let i = 0; i < budget.purchasesManager.length; i++) {
 			const rec = budget.purchasesManager.getrecurringAtIndex(i);
-			if(pur.dop.getUTCMonth() < today.getUTCMonth() || pur.dop.getUTCMonth() > today.getUTCMonth())
-				continue;
 			const newCard = this._createCard(pur);
 			newCard.onclick = (event) => {
-				console.log("Clicked");
+				$('#editRecurringDialog').modal("show");
+				this.lastClicked = rec.id;
 			};
 			newList.appendChild(newCard);
 		}
-
 		const oldList = document.querySelector("#recurringListContainer");
 		oldList.removeAttribute("id");
 		oldList.hidden = true;
@@ -455,20 +509,19 @@ budget.RecurringPageController = class{
 	}
 
 	//Edit
-	_createCard(purchase) {
+	_createCard(recurring) {
 		return htmlToElement(`<div class="card">
 		<div class="card-body container">
 		  <div class="row">
-			<div class="col-10 col-md-7 col-lg-3"><p class="scaleText">${budget.purchaseValues[purchase.type]}</p></div>
-			<div class="col-1 col-md-2 col-lg-1" ><div style="border-radius: 50%; height: 25px; width: 25px; background-color: ${budget.typeColors[purchase.type]};"></div></div>
-			<div id="costDisplay" class="col-6 col-md-3 col-lg-8"><p class="scaleText">$${purchase.cost}</p></div>
+		  <div class="col-10 col-md-9 col-lg-4"><p class="scaleText">${recurring.name}</p></div>
+		  <div id="costDisplay" class="col-6 col-md-3 col-lg-8"><p class="scaleText">$${recurring.cost}</p></div>
 		  </div>
 		  <div class="row">
-			<div class="col-10"><h8>Date Of Purchase: ${purchase.dop.getUTCMonth() + 1}/${purchase.dop.getUTCDate()}/${purchase.dop.getFullYear()}</h8></div>
-			<div class="col-2" style="text-align: center;"><h3 value="${purchase.id}" class="bi bi-pencil-square"></h3></div>
+		  <div class="col-10"><h8>Start Date: ${recurring.start.getUTCMonth() + 1}/${recurring.start.getUTCDate()}/${recurring.start.getFullYear()}</h8></div>
+		  <div class="col-2" style="text-align: center;"><h3 value="${recurring.id}" class="bi bi-pencil-square"></h3></div>
 		  </div>
 		</div>
-	  </div>`);
+		</div>`);
 	}
 }
 
@@ -476,25 +529,25 @@ budget.RecurringPageController = class{
 initializePage = () => {
 	if(document.querySelector("#loginPage")){
 		console.log("login Page");
-		new budget.LoginPageController();
+		budget.loginPageController =  new budget.LoginPageController();
 	}
 	else if(document.querySelector("#homePage")){
 		console.log("Home Page");
-		new budget.HomePageController();
+		budget.homePageController = new budget.HomePageController();
 	}
 	else if(document.querySelector("#statsPage")){
 		console.log("Stats Page");
-		new budget.StatsPageController();
+		budget.statsPageController = new budget.StatsPageController();
 	}
 	else if(document.querySelector("#entryPage")){
 		console.log("Entry Page");
-		new budget.UserDataController();
+		budget.userDataController = new budget.UserDataController();
 	}
 	else if(document.querySelector("#purchasesPage")){
-		new budget.PurchasesPageController();
+		budget.purchasesPageController = new budget.PurchasesPageController();
 	}
 	else if(document.querySelector("#recurringPage")){
-		new budget.RecurringPageController();
+		budget.recurringPageController = new budget.RecurringPageController();
 	}
 }
 
