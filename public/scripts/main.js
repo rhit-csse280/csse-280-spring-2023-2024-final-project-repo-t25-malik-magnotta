@@ -27,6 +27,7 @@ budget.homePageController = null;
 budget.statsPageController = null;
 budget.userDataController = null;
 budget.loginPageController = null;
+budget.singleUserManager = null;
 
 budget.purchaseValues = ["Groceries", "Resturant", "Personal Care","Transportation","Entertainment","Clothing","Household Supplies","Medical","Gift/Donation"];
 budget.typeColors = ["#3ac568", "#d72828", "#8d41be","#eb7d14","#0bb0f4","#e7184e","#99e817","#ff0100","#16e9ad"];
@@ -52,8 +53,18 @@ budget.UserDataManager = class {
 			[budget.FB_USER_SAVED]: 0,
 			[budget.FB_USER_SETASIDE]: 0,
 			[budget.FB_USER_ID]: budget.fbAuthManager.uid
-		}).then((event) => {
-			budget.checkForRedirects()});
+		}).then((docRef) => {
+			const oldDoc = this._ref.doc(docRef.id);
+			const newDoc = this._ref.doc(budget.fbAuthManager.uid);
+			oldDoc.get().then((doc) => {
+				const data = doc.data();
+				newDoc.set(data);
+				oldDoc.delete().then((event) => {
+					budget.checkForRedirects();
+				})
+			})
+			
+		})
 	}
 	async checkIfUserExists(uid){
 		let exists = null;
@@ -358,11 +369,17 @@ budget.HomePageController = class {
 		document.querySelector("#statsPageButton").onclick = (event) => {
 			window.location.href = "/stats.html";
 		}
+
 		document.querySelector("#menuSignOut").onclick = (event) => {
 			budget.fbAuthManager.signOut();
 		}
+
 		document.querySelector("#menuUserInfo").onclick = (event) => {
 			window.location.href = "/info.html";
+		}
+
+		document.querySelector("#infoPageButton").onclick = (event) => {
+			window.location.href = `/info.html?uid=${budget.fbAuthManager.uid}`;
 		}
 	}
 }
@@ -499,7 +516,6 @@ budget.RecurringPageController = class{
 			budget.recurringManager.delete(this.lastClicked);
 		});
 
-
 		budget.recurringManager.beginListening(this.updateList.bind(this));
 	}
 
@@ -538,6 +554,85 @@ budget.RecurringPageController = class{
 }
 
 
+budget.SingleUserManager = class {
+	constructor(){
+		this._documentSnapshot = {};
+		this._unsubscribe = null;
+		this._ref = firebase.firestore().collection(budget.FB_USER_COLLECTION).doc(budget.fbAuthManager.uid);
+	}
+
+	beginListening(changeListener){
+		this._ref.onSnapshot((doc) => {
+				console.log(doc.data());
+				this._documentSnapshot = doc;
+				changeListener();
+		})
+	}
+
+	stopListening(){
+		this._unsubscribe();
+	}
+
+	get name(){
+		return this._documentSnapshot.get(budget.FB_USER_NAME);
+	}
+
+	get income(){
+		return this._documentSnapshot.get(budget.FB_USER_INCOME);
+	}
+
+	get setAsidePerMonth(){
+		return this._documentSnapshot.get(budget.FB_USER_SETASIDE);
+	}
+
+	get lastMonthExpenses(){
+		return this._documentSnapshot.get(budget.FB_USER_LASTMONTHSPENDING);
+	}
+
+	get savings(){
+		return this._documentSnapshot.get(budget.FB_USER_SAVED);
+	}
+
+	get dateJoined(){
+		const dateString =  this._documentSnapshot.get(budget.FB_USER_DATEJOINED).toDate().toString();
+		let firstSpaceIndex = 0;
+		let lastSpaceIndex = 0;
+		let numSpaces = 0;
+		for(let i = 0; i < dateString.length; i++){
+			if(dateString[i] == ' '){
+				numSpaces++;
+				if(numSpaces == 1){
+					firstSpaceIndex = i;
+				}
+				if(numSpaces == 4){
+					lastSpaceIndex = i;
+				}
+			}
+		}
+		return dateString.substring(firstSpaceIndex+1, lastSpaceIndex);
+	}
+}
+
+budget.InfoPageController = class {
+	constructor(){
+		budget.singleUserManager.beginListening(this.updateView.bind(this));
+		document.querySelector("#home").onclick = (event) => {
+			window.location.href = "/home.html";
+		}
+	}
+
+	updateView(){
+		console.log("updating view");
+		document.querySelector("#statName").innerHTML = `Name: ${budget.singleUserManager.name}`;
+		document.querySelector("#statIncome").innerHTML = `Income: $${budget.singleUserManager.income}`;
+		document.querySelector("#statSetAside").innerHTML = `Set Aside Per Month: $${budget.singleUserManager.setAsidePerMonth}`;
+		document.querySelector("#statLastMonthExpenses").innerHTML = `Last Month's Expenses: $${budget.singleUserManager.lastMonthExpenses}`;
+		document.querySelector("#statSaved").innerHTML = `Amount Saved: $${budget.singleUserManager.savings}`;
+		document.querySelector("#statDateJoined").innerHTML = `Date Joined: ${budget.singleUserManager.dateJoined}`;
+	}
+}
+
+
 initializePage = () => {
 	if(document.querySelector("#loginPage")){
 		console.log("login Page");
@@ -560,6 +655,15 @@ initializePage = () => {
 	}
 	else if(document.querySelector("#recurringPage")){
 		budget.recurringPageController = new budget.RecurringPageController();
+
+	}
+	else if(document.querySelector("#infoPage")){
+		budget.singleUserManager = new budget.SingleUserManager();
+		new budget.InfoPageController();
+	}
+	else if(document.querySelector("#infoPage")){
+		budget.singleUserManager = new budget.SingleUserManager();
+		new budget.InfoPageController();
 	}
 }
 

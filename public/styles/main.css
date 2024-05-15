@@ -44,6 +44,9 @@ body {
     margin-top: auto;
 }
 
+.btn{
+    border: black solid 1px;
+}
 
 .shadowButton{
     background-color: #6fd2fc;
@@ -59,14 +62,18 @@ body {
     margin: 30px 0;
 }
 
-@media screen and (min-width: 0px) {
+.infoButtons{
+    justify-self: start;
+}
+
+
+@media screen and (max-width: 480px) {
     .scaleText{
         font-size: medium;
     }
     #costDisplay{
         text-align: start;
     }
-
 }
 
 
