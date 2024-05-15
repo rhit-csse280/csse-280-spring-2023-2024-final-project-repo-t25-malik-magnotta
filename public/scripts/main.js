@@ -13,6 +13,7 @@ budget.FB_DOP = "dateOfPurchase";
 budget.FB_PURCHASE_TYPE = "purchaseType"
 budget.FB_COST = "cost";
 budget.FB_RECURRING_NAME = "name";
+budget.FB_START_DATE = "start";
 budget.UID = null;
 
 budget.fbAuthManager = null;
@@ -174,12 +175,11 @@ budget.RecurringManager = class {
 		this._unsubscribe = null;
 	}
 
-	//edit
 	add(cost,name) {
 		this._ref.add({
 				[budget.FB_COST]: cost,
 				[budget.FB_RECURRING_NAME]: name,
-				[budget.FB_DOP]: firebase.firestore.Timestamp.now(),
+				[budget.FB_START_DATE]: firebase.firestore.Timestamp.now(),
 				[budget.FB_USER_ID]: budget.fbAuthManager.uid,
 			})
 			.then(function (docRef) {
@@ -210,23 +210,20 @@ budget.RecurringManager = class {
 	}
 
 	//edit
-	getpurchaseAtIndex(index) {
+	getRecurringAtIndex(index) {
 		const docSnapshot = this._documentSnapshots[index];
-		const pur = new budget.Purchase(docSnapshot.id,
+		const rec = new budget.Recurring(docSnapshot.id,
 			docSnapshot.get(budget.FB_COST),
-			docSnapshot.get(budget.FB_PURCHASE_TYPE),
-			docSnapshot.get(budget.FB_DOP));
-		return pur;
+			docSnapshot.get(budget.FB_RECURRING_NAME),
+			docSnapshot.get(budget.FB_START_DATE));
+		return rec;
 	}
 
 	//edit
 	getTotal(){
 		let total = 0;
-		let today = new Date(Date.now());
 		for(let x = 0; x < this._documentSnapshots.length;x++){
-			let s = this.getpurchaseAtIndex(x);
-			if(s.dop.getUTCMonth() < today.getUTCMonth() || s.dop.getUTCMonth() > today.getUTCMonth())
-				continue;
+			let s = this.getRecurringAtIndex(x);
 			total = total + parseFloat(s.cost);
 		}
 		return total;
@@ -250,11 +247,10 @@ budget.Purchase = class{
 }
 
 budget.Recurring = class{
-	constructor(id,cost,name,recDate,startDate){
+	constructor(id,cost,name,startDate){
 		this.id = id;
 		this.cost = cost;
 		this.name = name;
-		this.recDate = recDate;
 		this.startDate = startDate;
 	}
 }
@@ -468,9 +464,9 @@ budget.RecurringPageController = class{
 	constructor(){
 
 		document.querySelector("#submitAddRecurring").onclick = (event) => {
-			const type = document.querySelector("#formControlSelect").value;
-			const cost = document.querySelector("#typeNumber").value;
-			budget.purchasesManager.add(cost,type);
+			const name = document.querySelector("#nameOfRecurringCost").value;
+			const cost = document.querySelector("#cost").value;
+			budget.recurringManager.add(cost,name);
 		};
 
 		document.querySelector("#recurringHomeBtn").onclick = (event) => {
@@ -492,11 +488,10 @@ budget.RecurringPageController = class{
 	}
 
 	updateList() {
-		const today = new Date(Date.now());
 		const newList = htmlToElement('<div id="recurringListContainer"></div>');
 		for (let i = 0; i < budget.purchasesManager.length; i++) {
-			const rec = budget.purchasesManager.getrecurringAtIndex(i);
-			const newCard = this._createCard(pur);
+			const rec = budget.purchasesManager.getRecurringAtIndex(i);
+			const newCard = this._createCard(rec);
 			newCard.onclick = (event) => {
 				$('#editRecurringDialog').modal("show");
 				this.lastClicked = rec.id;
