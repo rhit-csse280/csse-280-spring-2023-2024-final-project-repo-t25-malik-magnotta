@@ -110,7 +110,7 @@ budget.PurchasesManager = class {
 				[budget.FB_PURCHASE_TYPE]: type,
 			}
 		).then(function (docRef) {
-			console.log("Document edited with ID: ", docRef.id);
+			console.log("Document edited with ID: ", id);
 		})
 		.catch(function (error) {
 			console.error("Error editing document: ", error);
@@ -155,7 +155,7 @@ budget.PurchasesManager = class {
 				continue;
 			total = total + parseFloat(s.cost);
 		}
-		return total;
+		return  total.toFixed(2);
 	}
 	
 	//For graph
@@ -188,6 +188,24 @@ budget.RecurringManager = class {
 			.catch(function (error) {
 				console.error("Error adding document: ", error);
 			});
+	}
+
+	edit(id,cost,type){
+		this._ref.doc(id).update(
+			{
+				[budget.FB_COST]: cost,
+				[budget.FB_PURCHASE_TYPE]: type,
+			}
+		).then(function (docRef) {
+			console.log("Document edited with ID: ", id);
+		})
+		.catch(function (error) {
+			console.error("Error editing document: ", error);
+		});
+	}
+
+	delete(id){
+		this._ref.doc(id).delete();
 	}
 
 	
@@ -229,12 +247,6 @@ budget.RecurringManager = class {
 		return total;
 	}
 
-}
-
-budget.PurchaseManager = class {
-	constructor(){
-		
-	}
 }
 
 budget.Purchase = class{
@@ -330,6 +342,10 @@ budget.checkForRedirects = async function(){
 
 budget.HomePageController = class {
 	constructor() {
+
+		let precentOfBudget = 0;
+
+		document.querySelector("#coverUp").style.background= `conic-gradient(#00000000 ${precentOfBudget}deg,white 0deg`;
 
 		document.querySelector("#purchasesPageButton").onclick = (event) => {
 			window.location.href = "/purchases.html";
@@ -474,13 +490,13 @@ budget.RecurringPageController = class{
 		};
 
 		document.getElementById("submitEditRecurring").addEventListener("click",(event)=>{
-			const type = document.querySelector("#editFormControlSelect").value;
-			const cost = document.querySelector("#editTypeNumber").value;
-			budget.purchasesManager.edit(this.lastClicked,cost,type);
+			const name = document.querySelector("#editNameOfRecurringCost").value;
+			const cost = document.querySelector("#editCost").value;
+			budget.recurringManager.edit(this.lastClicked,cost,name);
 		});
 
 		document.getElementById("deleteRecurring").addEventListener("click",(event)=>{
-			budget.purchasesManager.delete(this.lastClicked);
+			budget.recurringManager.delete(this.lastClicked);
 		});
 
 

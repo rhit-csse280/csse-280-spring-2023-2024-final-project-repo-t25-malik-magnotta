@@ -20,8 +20,9 @@
     <br>
     <div align="right">
     <div class="dropdown pull-xs-right">
-      <button class="btn bmd-btn-icon dropdown-toggle" type="button" id="lr1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="material-symbols-outlined">
+      <button class="" type="button" id="lr1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+       style="height: 70px; width:70px; border-radius: 50%; display:inline-block;background-color: white; border: none;">
+        <span class="material-symbols-outlined"  style="font-size: 50px; display: inline-block;">
           menu
           </span>
       <div class="ripple-container"></div></button>
@@ -30,7 +31,7 @@
         <span class="material-symbols-outlined">
           person
           </span>&nbsp;&nbsp;&nbsp;User Info</button>
-        <button id="menuSignOut" class="dropdown-item" type="button">
+        <button id="menuSignOut" class="dropdown-item" type="button" >
         <i class="material-icons">logout</i>&nbsp;&nbsp;&nbsp;Sign Out</button>
       </div>
       </div>
@@ -43,7 +44,7 @@
         <div class="circularProgress" style="position:relative; width:250px; height: 250px; background: conic-gradient(lightgreen 150deg,orange 180deg 300deg,red 320deg 359.9deg);
         border-radius: 50%;  z-index: -2; box-shadow: 10px 10px 25px 0px lightblue;" >
         </div>
-        <div class="circularProgress" style="position:relative; width:254px; height: 254px;  margin-top: -251px; background:conic-gradient(#00000000 259deg,white 0deg);
+        <div id="coverUp" class="circularProgress" style="position:relative; width:254px; height: 254px;  margin-top: -251px; background:conic-gradient(#00000000 0deg,white 0deg);
         border-radius: 50%;">
         </div>
         <div style="position:relative; width:230px; height: 230px; background: white;
@@ -53,12 +54,12 @@
     </div>
     <div style="margin-bottom:15%; ">
       <ol style="display:flex;">
-        <Button id="recurringPageButton" type="button" class="btn home-page-buttons" style="position: absolute; left: 10%;">Recurring</Button>
-        <Button id="purchasesPageButton" type="button" class="btn home-page-buttons" style="position: absolute; right: 10%;">Purchases</Button>
+        <Button id="recurringPageButton" type="button" class="btn home-page-buttons shadowButton" style="position: absolute; left: 10%;">Recurring</Button>
+        <Button id="purchasesPageButton" type="button" class="btn home-page-buttons shadowButton" style="position: absolute; right: 10%;">Purchases</Button>
       </ol>
     </div>
     <div class="justify-content-center" style="display: flex; justify-content: center;">
-      <Button id="statsPageButton" type="button" class="btn home-page-buttons">Stats</Button>
+      <Button id="statsPageButton" type="button" class="btn home-page-buttons shadowButton">Stats</Button>
     </div>
 
   </div>
