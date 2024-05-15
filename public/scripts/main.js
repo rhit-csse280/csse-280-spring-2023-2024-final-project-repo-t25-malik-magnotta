@@ -12,6 +12,7 @@ budget.FB_USER_ID = "userId";
 budget.FB_DOP = "dateOfPurchase";
 budget.FB_PURCHASE_TYPE = "purchaseType"
 budget.FB_COST = "cost";
+budget.FB_RECURRING_NAME = "name";
 budget.UID = null;
 
 budget.fbAuthManager = null;
@@ -174,10 +175,10 @@ budget.RecurringManager = class {
 	}
 
 	//edit
-	add(cost,type) {
+	add(cost,name) {
 		this._ref.add({
 				[budget.FB_COST]: cost,
-				[budget.FB_PURCHASE_TYPE]: type,
+				[budget.FB_RECURRING_NAME]: name,
 				[budget.FB_DOP]: firebase.firestore.Timestamp.now(),
 				[budget.FB_USER_ID]: budget.fbAuthManager.uid,
 			})
