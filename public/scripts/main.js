@@ -193,7 +193,7 @@ budget.RecurringManager = class {
 	
 	beginListening(changeListener) {
 
-		let query = this._ref.orderBy(budget.FB_DOP, "desc");
+		let query = this._ref.orderBy(budget.FB_START_DATE, "desc");
 		query = query.where(budget.FB_USER_ID, "==", budget.fbAuthManager.uid);
 		this._unsubscribe = query.onSnapshot((querySnapshot) => {
 			this._documentSnapshots = querySnapshot.docs;
@@ -251,7 +251,7 @@ budget.Recurring = class{
 		this.id = id;
 		this.cost = cost;
 		this.name = name;
-		this.startDate = startDate;
+		this.start = startDate.toDate();
 	}
 }
 
@@ -489,8 +489,8 @@ budget.RecurringPageController = class{
 
 	updateList() {
 		const newList = htmlToElement('<div id="recurringListContainer"></div>');
-		for (let i = 0; i < budget.purchasesManager.length; i++) {
-			const rec = budget.purchasesManager.getRecurringAtIndex(i);
+		for (let i = 0; i < budget.recurringManager.length; i++) {
+			const rec = budget.recurringManager.getRecurringAtIndex(i);
 			const newCard = this._createCard(rec);
 			newCard.onclick = (event) => {
 				$('#editRecurringDialog').modal("show");
