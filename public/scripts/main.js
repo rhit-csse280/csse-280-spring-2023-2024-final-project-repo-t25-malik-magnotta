@@ -227,7 +227,6 @@ budget.RecurringManager = class {
 		return this._documentSnapshots.length;
 	}
 
-	//edit
 	getRecurringAtIndex(index) {
 		const docSnapshot = this._documentSnapshots[index];
 		const rec = new budget.Recurring(docSnapshot.id,
@@ -237,7 +236,6 @@ budget.RecurringManager = class {
 		return rec;
 	}
 
-	//edit
 	getTotal(){
 		let total = 0;
 		for(let x = 0; x < this._documentSnapshots.length;x++){
@@ -343,6 +341,7 @@ budget.checkForRedirects = async function(){
 budget.HomePageController = class {
 	constructor() {
 
+		let totalBudget = budget.fbUserDataManager.income - recurringManager.getTotal();
 		let precentOfBudget = 0;
 
 		document.querySelector("#coverUp").style.background= `conic-gradient(#00000000 ${precentOfBudget}deg,white 0deg`;
