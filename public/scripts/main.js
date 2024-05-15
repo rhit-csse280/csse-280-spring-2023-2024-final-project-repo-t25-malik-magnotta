@@ -351,12 +351,8 @@ budget.checkForRedirects = async function(){
 
 budget.HomePageController = class {
 	constructor() {
-
-		let totalBudget = budget.fbUserDataManager.income - recurringManager.getTotal();
-		let precentOfBudget = 0;
-
-		document.querySelector("#coverUp").style.background= `conic-gradient(#00000000 ${precentOfBudget}deg,white 0deg`;
-
+		budget.singleUserManager.beginListening(this.updateView.bind(this));
+		
 		document.querySelector("#purchasesPageButton").onclick = (event) => {
 			window.location.href = "/purchases.html";
 		}
@@ -374,13 +370,26 @@ budget.HomePageController = class {
 		}
 
 		document.querySelector("#menuUserInfo").onclick = (event) => {
-			window.location.href = "/info.html";
-		}
-
-		document.querySelector("#infoPageButton").onclick = (event) => {
 			window.location.href = `/info.html?uid=${budget.fbAuthManager.uid}`;
 		}
 	}
+
+	updateView(data){
+		console.log(data);
+		let totalBudget =  data["Income"] - budget.recurringManager.getTotal();
+		let precentOfBudget = budget.purchasesManager.getTotal(new Date(Date.now()))/totalBudget;
+		let displayPrecent = 100;
+		if(precentOfBudget <= 100){
+			displayPrecent = precentOfBudget;
+		}
+		document.querySelector("#coverUp").style.background= `conic-gradient(#00000000 ${(displayPrecent/100)*359.9}deg,white 0deg`;
+		document.querySelector("#budgetPrecentage").innerHTML = `${precentOfBudget}%`;
+	}
+
+	setUser(doc){
+		this.use = doc
+	}
+
 }
 
 budget.StatsPageController = class {
@@ -564,7 +573,7 @@ budget.SingleUserManager = class {
 		this._ref.onSnapshot((doc) => {
 				console.log(doc.data());
 				this._documentSnapshot = doc;
-				changeListener();
+				changeListener(doc);
 		})
 	}
 
@@ -639,6 +648,7 @@ initializePage = () => {
 	}
 	else if(document.querySelector("#homePage")){
 		console.log("Home Page");
+		budget.singleUserManager = new budget.SingleUserManager();
 		budget.homePageController = new budget.HomePageController();
 	}
 	else if(document.querySelector("#statsPage")){
