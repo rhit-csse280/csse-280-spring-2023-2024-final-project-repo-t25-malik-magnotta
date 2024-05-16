@@ -577,6 +577,20 @@ budget.SingleUserManager = class {
 		this._unsubscribe();
 	}
 
+	update(income, setAsidePerMonth, lastMonthExpenses, savings){
+		this._ref.update({
+			[budget.FB_USER_INCOME]: income,
+			[budget.FB_USER_SETASIDE]: setAsidePerMonth,
+			[budget.FB_USER_LASTMONTHSPENDING]: lastMonthExpenses,
+			[budget.FB_USER_SAVED]: savings
+		})
+		.then(() => {
+			console.log("Successfully updated user");
+		}).catch((error) => {
+			console.log("Update failed! Error ", error);
+		})
+	}
+
 	get name(){
 		return this._documentSnapshot.get(budget.FB_USER_NAME);
 	}
@@ -619,6 +633,22 @@ budget.SingleUserManager = class {
 
 budget.InfoPageController = class {
 	constructor(){
+		document.querySelector("#submitUpdateUser").addEventListener("click", (event) => {
+			const income = document.querySelector("#inputIncome").value;
+			const setAsidePerMonth = document.querySelector("#inputSetAsidePerMonth").value;
+			const lastMonthExpenses = document.querySelector("#inputLastMonthExpenses").value;
+			const saved = document.querySelector("#inputSaved").value;
+			budget.singleUserManager.update(income, setAsidePerMonth, lastMonthExpenses, saved);
+		})
+		$("#editDataDialog").on("show.bs.modal", (event) => {
+			document.querySelector("#inputIncome").value = budget.singleUserManager.income;
+			document.querySelector("#inputSetAsidePerMonth").value = budget.singleUserManager.setAsidePerMonth;
+			document.querySelector("#inputLastMonthExpenses").value = budget.singleUserManager.lastMonthExpenses;
+			document.querySelector("#inputSaved").value = budget.singleUserManager.savings;
+		})
+		$("#editDataDialog").on("shown.bs.modal", (event) => {
+			document.querySelector("#inputIncome").focus();
+		})
 		budget.singleUserManager.beginListening(this.updateView.bind(this));
 		document.querySelector("#home").onclick = (event) => {
 			window.location.href = "/home.html";
@@ -627,12 +657,12 @@ budget.InfoPageController = class {
 
 	updateView(){
 		console.log("updating view");
-		document.querySelector("#statName").innerHTML = `Name: ${budget.singleUserManager.name}`;
-		document.querySelector("#statIncome").innerHTML = `Income: $${budget.singleUserManager.income}`;
-		document.querySelector("#statSetAside").innerHTML = `Set Aside Per Month: $${budget.singleUserManager.setAsidePerMonth}`;
-		document.querySelector("#statLastMonthExpenses").innerHTML = `Last Month's Expenses: $${budget.singleUserManager.lastMonthExpenses}`;
-		document.querySelector("#statSaved").innerHTML = `Amount Saved: $${budget.singleUserManager.savings}`;
-		document.querySelector("#statDateJoined").innerHTML = `Date Joined: ${budget.singleUserManager.dateJoined}`;
+		document.querySelector("#statName").innerText = `Name: ${budget.singleUserManager.name}`;
+		document.querySelector("#statIncome").innerText = `Income: $${budget.singleUserManager.income}`;
+		document.querySelector("#statSetAside").innerText = `Set Aside Per Month: $${budget.singleUserManager.setAsidePerMonth}`;
+		document.querySelector("#statLastMonthExpenses").innerText = `Last Month's Expenses: $${budget.singleUserManager.lastMonthExpenses}`;
+		document.querySelector("#statSaved").innerText = `Amount Saved: $${budget.singleUserManager.savings}`;
+		document.querySelector("#statDateJoined").innerText = `Date Joined: ${budget.singleUserManager.dateJoined}`;
 	}
 }
 
