@@ -380,10 +380,22 @@ budget.HomePageController = class {
 		const income = parseFloat(data.get("Income"));
 		const recurringCosts = parseFloat(budget.recurringManager.getTotal());
 		const totalBudget =  income - recurringCosts;
+		document.querySelector("#totalBudget").innerHTML = `Total Budget: $${totalBudget}`;
 		let precentOfBudget = (budget.purchasesManager.getTotal(new Date(Date.now()))/totalBudget).toFixed(2);
 		let displayPrecent = precentOfBudget*100;
-		document.querySelector("#coverUp").style.background= `conic-gradient(#00000000 ${(precentOfBudget)*359.9}deg,white 0deg`;
-		document.querySelector("#budgetPrecentage").innerHTML = `${displayPrecent}%`;
+		if(displayPrecent >= 100){
+			if(displayPrecent == 100){
+				document.querySelector("#budgetPrecentage").innerHTML = `100%`;
+			}
+			else{
+				document.querySelector("#budgetPrecentage").innerHTML = `&nbsp;&nbsp;Over Budget`;
+			}
+			document.querySelector("#coverUp").style.background= `red`;
+		}
+		else{
+			document.querySelector("#coverUp").style.background= `conic-gradient(#00000000 ${(precentOfBudget)*359.9}deg,white 0deg`;
+			document.querySelector("#budgetPrecentage").innerHTML = `${displayPrecent}%`;
+		}	
 	}
 
 }
@@ -520,10 +532,13 @@ budget.RecurringPageController = class{
 			budget.recurringManager.delete(this.lastClicked);
 		});
 
+		budget.singleUserManager.beginListening(() =>{});
 		budget.recurringManager.beginListening(this.updateList.bind(this));
 	}
 
 	updateList() {
+		document.querySelector("#budgetTotalDisplay").innerHTML =  `Budget after Recurring Costs: $${budget.singleUserManager.income - budget.recurringManager.getTotal()}`;
+
 		const newList = htmlToElement('<div id="recurringListContainer"></div>');
 		for (let i = 0; i < budget.recurringManager.length; i++) {
 			const rec = budget.recurringManager.getRecurringAtIndex(i);
@@ -689,6 +704,7 @@ initializePage = () => {
 		budget.purchasesPageController = new budget.PurchasesPageController();
 	}
 	else if(document.querySelector("#recurringPage")){
+		budget.singleUserManager = new budget.SingleUserManager();
 		budget.recurringPageController = new budget.RecurringPageController();
 
 	}
