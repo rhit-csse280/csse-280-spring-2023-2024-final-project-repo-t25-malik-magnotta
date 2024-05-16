@@ -225,7 +225,7 @@ budget.RecurringManager = class {
 		let query = this._ref.orderBy(budget.FB_START_DATE, "desc");
 		query = query.where(budget.FB_USER_ID, "==", budget.fbAuthManager.uid);
 		this._unsubscribe = query.onSnapshot((querySnapshot) => {
-			this._documentSnapshots = querySnapshot.docs;
+			this._documentSnapshots = querySnapshot.docs; 
 			changeListener();
 		});
 	}
@@ -351,6 +351,8 @@ budget.checkForRedirects = async function(){
 
 budget.HomePageController = class {
 	constructor() {
+		budget.purchasesManager.beginListening(()=>{});
+		budget.recurringManager.beginListening(()=>{});
 		budget.singleUserManager.beginListening(this.updateView.bind(this));
 		
 		document.querySelector("#purchasesPageButton").onclick = (event) => {
@@ -374,20 +376,14 @@ budget.HomePageController = class {
 		}
 	}
 
-	updateView(data){
-		console.log(data);
-		let totalBudget =  data["Income"] - budget.recurringManager.getTotal();
-		let precentOfBudget = budget.purchasesManager.getTotal(new Date(Date.now()))/totalBudget;
-		let displayPrecent = 100;
-		if(precentOfBudget <= 100){
-			displayPrecent = precentOfBudget;
-		}
-		document.querySelector("#coverUp").style.background= `conic-gradient(#00000000 ${(displayPrecent/100)*359.9}deg,white 0deg`;
-		document.querySelector("#budgetPrecentage").innerHTML = `${precentOfBudget}%`;
-	}
-
-	setUser(doc){
-		this.use = doc
+	async updateView(data){
+		const income = parseFloat(data.get("Income"));
+		const recurringCosts = parseFloat(budget.recurringManager.getTotal());
+		const totalBudget =  income - recurringCosts;
+		let precentOfBudget = (budget.purchasesManager.getTotal(new Date(Date.now()))/totalBudget).toFixed(2);
+		let displayPrecent = precentOfBudget*100;
+		document.querySelector("#coverUp").style.background= `conic-gradient(#00000000 ${(precentOfBudget)*359.9}deg,white 0deg`;
+		document.querySelector("#budgetPrecentage").innerHTML = `${displayPrecent}%`;
 	}
 
 }
