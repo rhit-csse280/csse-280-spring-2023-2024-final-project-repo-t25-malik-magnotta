@@ -16,10 +16,12 @@
     <a class="navbar-brand" href="#">Budget Tracker</a>
   </nav>
 
-  <div id="statsPage" class="container page-container">
+  <div id="statsPage" class="container page-container" >
     <!-- for the graph -->
-    <div>
-      <canvas id="myChart"></canvas>
+    <div style="display: flex; align-items: center; justify-content: center;">
+     <div class="chart-container gridChart" style="display: flex; align-items: center; justify-content: center; position: relative; height:60vh; width:90vw; min-height: 300px; ">
+        <canvas id="myChart"></canvas>
+      </div>
     </div>
     <br>
     <br>
@@ -27,7 +29,6 @@
     <h1 style="text-align: center;">Average Spending on Diffrent Items</h1>
     <!-- for the bar -->
     <div>
-
     </div>
     <!-- for the list of difrent types of purchases -->
     <div style="display: flex;">

@@ -173,8 +173,16 @@ budget.PurchasesManager = class {
 	getTotalsFromPastYear(){
 		let list = [0,0,0,0,0,0,0,0,0,0,0,0];
 		let today = new Date(Date.now());
-		//for(let x = ; x > )
 		
+		for(let x = 0; x < 12;x++){
+			 let i = today.getUTCMonth()-x;
+			 let year = today.getFullYear();
+			 if(i < 0){
+
+			 }
+			 list[i] = this.getTotal(new Date(`${i}-${today.getDay()}-${year}`));
+		}
+		return list;
 	}
 }
 
@@ -402,8 +410,8 @@ budget.HomePageController = class {
 
 budget.StatsPageController = class {
 	constructor() {
+		
 		this.updateView();
-
 		document.querySelector("#homeButton").onclick = (event) => {
 			window.location.href = "/home.html";
 		}
@@ -417,20 +425,24 @@ budget.StatsPageController = class {
           labels: budget.months,
           datasets: [{
             label: 'Amount Spent',
-            data: [12, 19, 3, 5, 2, 3,5,5,5,5,5,5],
+            data: budget.purchasesManager.getTotalsFromPastYear(),
             borderWidth: 3
           }]
         },
         options: {
+			indexAxis: 'y',
           scales: {
-            y: {
+            x: {
               beginAtZero: true
-            }
-          }
+            },
+			
+          },
+		  responsive: true,
+		  mantainAspectRatio:false,
+		  aspectRatio: 12/14
         }
       });
 	}
-
 	updateView(){
 		this.createChart();
 	}
