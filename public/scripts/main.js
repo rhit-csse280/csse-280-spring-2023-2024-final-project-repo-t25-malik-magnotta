@@ -30,7 +30,7 @@ budget.loginPageController = null;
 budget.singleUserManager = null;
 
 budget.purchaseValues = ["Groceries", "Resturant", "Personal Care","Transportation","Entertainment","Clothing","Household Supplies","Medical","Gift/Donation"];
-budget.typeColors = ["#3ac568", "#d72828", "#8d41be","#eb7d14","#0bb0f4","#e7184e","#99e817","#ff0100","#16e9ad"];
+budget.typeColors = ["#3ac568", "#eddd4a", "#8d41be","#eb7d14","#0bb0f4","#f781f3","#99e817","#ff0100","#16e9ad"];
 budget.months = ['January', 'Febuary', 'March', 'April', 'May', 'June','July','August','September','October','November','December'];
 
 function getMonths() {
@@ -183,13 +183,14 @@ budget.PurchasesManager = class {
 		return  total.toFixed(2);
 	}
 
+
 	getTotalOfType(type){
 		let total = 0;
 		const date = new Date(Date.now());
 		for(let x = 0; x < this._documentSnapshots.length;x++){
 			let s = this.getpurchaseAtIndex(x);
 			if(s.dop.getUTCMonth() < date.getUTCMonth() || s.dop.getUTCMonth() > date.getUTCMonth())
-				continue;
+				break;
 			if(type != s.type)
 				continue;
 			total = total + parseFloat(s.cost);
@@ -212,7 +213,6 @@ budget.PurchasesManager = class {
 			 let date = new Date(`${i+1}-01-${year}`);
 			 list[11-x] = this.getTotal(date);
 		}
-		console.log(list);
 		return list;
 	}
 
@@ -248,11 +248,11 @@ budget.RecurringManager = class {
 			});
 	}
 
-	edit(id,cost,type){
+	edit(id,cost,name){
 		this._ref.doc(id).update(
 			{
 				[budget.FB_COST]: cost,
-				[budget.FB_PURCHASE_TYPE]: type,
+				[budget.FB_RECURRING_NAME]: name,
 			}
 		).then(function (docRef) {
 			console.log("Document edited with ID: ", id);
@@ -423,13 +423,14 @@ budget.HomePageController = class {
 		}
 	}
 
-	async updateView(data){
-		const income = parseFloat(data.get("Income"));
+	async updateView(){
+		const income = parseFloat(budget.singleUserManager.income);
 		const recurringCosts = parseFloat(budget.recurringManager.getTotal());
-		const totalBudget =  income - recurringCosts;
+		const totalBudget =  income - recurringCosts - budget.singleUserManager.setAsidePerMonth;
 		document.querySelector("#totalBudget").innerHTML = `Total Budget: $${totalBudget}`;
-		let precentOfBudget = (budget.purchasesManager.getTotal(new Date(Date.now()))/totalBudget).toFixed(2);
-		let displayPrecent = precentOfBudget*100;
+		document.querySelector('#budgetUsed').innerHTML = `Used: $${budget.purchasesManager.getTotal(new Date(Date.now()))}`
+		let precentOfBudget = parseFloat((Math.round( parseFloat((budget.purchasesManager.getTotal(new Date(Date.now())))/totalBudget) * 100) / 100).toFixed(2));
+		let displayPrecent = (precentOfBudget*100).toFixed(0);
 		if(displayPrecent >= 100){
 			if(displayPrecent == 100){
 				document.querySelector("#budgetPrecentage").innerHTML = `100%`;
@@ -498,7 +499,7 @@ budget.StatsPageController = class {
 		labels: budget.purchaseValues,
 		datasets: [
 		  {
-			label: 'Dataset 1',
+			label: 'Amount in $',
 			data: budget.purchasesManager.getPrecentOfEachType(),
 			backgroundColor: budget.typeColors,
 		  }
@@ -634,7 +635,7 @@ budget.RecurringPageController = class{
 	}
 
 	updateList() {
-		document.querySelector("#budgetTotalDisplay").innerHTML =  `Budget after Recurring Costs: $${budget.singleUserManager.income - budget.recurringManager.getTotal()}`;
+		document.querySelector("#budgetTotalDisplay").innerHTML =  `Budget after Recurring Costs: $${budget.singleUserManager.income - budget.recurringManager.getTotal() - budget.singleUserManager.setAsidePerMonth}`;
 
 		const newList = htmlToElement('<div id="recurringListContainer"></div>');
 		for (let i = 0; i < budget.recurringManager.length; i++) {
@@ -679,9 +680,8 @@ budget.SingleUserManager = class {
 
 	beginListening(changeListener){
 		this._ref.onSnapshot((doc) => {
-				console.log(doc.data());
 				this._documentSnapshot = doc;
-				changeListener(doc);
+				changeListener();
 		})
 	}
 
