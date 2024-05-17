@@ -33,12 +33,26 @@ budget.purchaseValues = ["Groceries", "Resturant", "Personal Care","Transportati
 budget.typeColors = ["#3ac568", "#d72828", "#8d41be","#eb7d14","#0bb0f4","#e7184e","#99e817","#ff0100","#16e9ad"];
 budget.months = ['January', 'Febuary', 'March', 'April', 'May', 'June','July','August','September','October','November','December'];
 
+function getMonths() {
+	let date = new Date(Date.now());
+	let list = [];
+	for(let x = 0; x < 12; x++){
+		let month = mod(date.getUTCMonth()-x,12);
+		list[11-x]=budget.months[month];
+	}
+	return list;
+}
+
 function htmlToElement(html) {
 	var template = document.createElement('template');
 	html = html.trim();
 	template.innerHTML = html;
 	return template.content.firstChild;
 }
+
+function mod(n, m) {
+	return ((n % m) + m) % m;
+  }
 
 budget.UserDataManager = class {
 	constructor(){
@@ -168,19 +182,44 @@ budget.PurchasesManager = class {
 		}
 		return  total.toFixed(2);
 	}
+
+	getTotalOfType(type){
+		let total = 0;
+		const date = new Date(Date.now());
+		for(let x = 0; x < this._documentSnapshots.length;x++){
+			let s = this.getpurchaseAtIndex(x);
+			if(s.dop.getUTCMonth() < date.getUTCMonth() || s.dop.getUTCMonth() > date.getUTCMonth())
+				continue;
+			if(type != s.type)
+				continue;
+			total = total + parseFloat(s.cost);
+		}
+		return  total.toFixed(2);
+	}
 	
 	//For graph
 	getTotalsFromPastYear(){
-		let list = [0,0,0,0,0,0,0,0,0,0,0,0];
+		let list = [];
 		let today = new Date(Date.now());
 		
 		for(let x = 0; x < 12;x++){
-			 let i = today.getUTCMonth()-x;
-			 let year = today.getFullYear();
+			 let i = (today.getUTCMonth()-x);
+			 let year = parseInt(today.getFullYear());
 			 if(i < 0){
-
+				year = year-1;
+				i = mod(i,12);
 			 }
-			 list[i] = this.getTotal(new Date(`${i}-${today.getDay()}-${year}`));
+			 let date = new Date(`${i+1}-01-${year}`);
+			 list[11-x] = this.getTotal(date);
+		}
+		console.log(list);
+		return list;
+	}
+
+	getPrecentOfEachType(){
+		let list = [];
+		for(let x = 0; x < budget.purchaseValues.length;x++){
+			list.push(this.getTotalOfType(x));
 		}
 		return list;
 	}
@@ -411,10 +450,10 @@ budget.HomePageController = class {
 budget.StatsPageController = class {
 	constructor() {
 		
-		this.updateView();
 		document.querySelector("#homeButton").onclick = (event) => {
 			window.location.href = "/home.html";
 		}
+		budget.purchasesManager.beginListening(this.createChart.bind(this));
 	}
 
 	createChart(){
@@ -422,7 +461,7 @@ budget.StatsPageController = class {
       	new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: budget.months,
+          labels: getMonths(),
           datasets: [{
             label: 'Amount Spent',
             data: budget.purchasesManager.getTotalsFromPastYear(),
@@ -437,11 +476,57 @@ budget.StatsPageController = class {
             },
 			
           },
+		  plugins: {
+			title: {
+			  display: true,
+			  text: 'Amount Spent Each month Over past Year',
+			  font: {
+				size:25,
+				family: 'Arial',
+			  }
+			}
+		  },
 		  responsive: true,
 		  mantainAspectRatio:false,
 		  aspectRatio: 12/14
         }
       });
+
+
+
+	  const data = {
+		labels: budget.purchaseValues,
+		datasets: [
+		  {
+			label: 'Dataset 1',
+			data: budget.purchasesManager.getPrecentOfEachType(),
+			backgroundColor: budget.typeColors,
+		  }
+		]
+	  };
+	  const don = document.getElementById('myDougnutChart');
+	  const config = {
+		type: 'doughnut',
+		data: data,
+		options: {
+		  responsive: true,
+		  plugins: {
+			legend: {
+			  position: 'top',
+			},
+			title: {
+			  display: true,
+			  text: 'Spending on Different Items This Month',
+			  font: {
+				size:30,
+				family: 'Arial',
+			  }
+			}
+		  }
+		},
+	  };
+	  new Chart(don,config);
+
 	}
 	updateView(){
 		this.createChart();

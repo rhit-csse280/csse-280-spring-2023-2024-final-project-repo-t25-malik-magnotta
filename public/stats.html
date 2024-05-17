@@ -15,33 +15,27 @@
   <nav class="navbar navbar-dark fixed-top">
     <a class="navbar-brand" href="#">Budget Tracker</a>
   </nav>
-
+  
   <div id="statsPage" class="container page-container" >
+    <div style="text-align: center;">
+      <button id="homeButton" class="btn" style=" border: solid black 2px; border-radius: 5%;">Home</button>
+  </div>
+    <!-- for the bar -->
+    <div style="display: flex; align-items: center; justify-content: center;">
+    <div class="chart-container" style="display: flex; align-items: center; justify-content: center; position: relative; height:60vh; width:90vw; min-height: 300px; ">
+      <canvas id="myDougnutChart"></canvas>
+    </div>
+    </div>
+    <br>
     <!-- for the graph -->
     <div style="display: flex; align-items: center; justify-content: center;">
      <div class="chart-container gridChart" style="display: flex; align-items: center; justify-content: center; position: relative; height:60vh; width:90vw; min-height: 300px; ">
         <canvas id="myChart"></canvas>
       </div>
     </div>
+  
+    
     <br>
-    <br>
-    <br>
-    <h1 style="text-align: center;">Average Spending on Diffrent Items</h1>
-    <!-- for the bar -->
-    <div>
-    </div>
-    <!-- for the list of difrent types of purchases -->
-    <div style="display: flex;">
-      <ol style="display: inline-block;">
-        <li>
-          <div style="background-color: black; height: 10px;"></div>
-        </li>
-      </ol>c
-    </div>
-    <br>
-    <div style="text-align: center;">
-        <button id="homeButton" class="btn" style="border: solid black 2px; border-radius: 5%;">Home</button>
-    </div>
 
   </div>
   <script src="scripts/jquery.min.js"></script>
